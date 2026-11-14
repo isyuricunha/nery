@@ -39,6 +39,10 @@ FRAMES_PER_STATE = 6
 MIN_BODY_PIXELS = 900
 MIN_SIGNATURE_PIXELS = 24
 MAX_HUE_DISTANCE = 0.35  # total-variation distance vs the row's first frame
+# Motion gate: run-family rows must show REAL leg movement between consecutive
+# frames (a "walking in place" cycle with near-identical frames fails the build).
+RUN_ROWS = {"running-right", "running-left", "running"}
+MIN_LEG_MOTION_PIXELS = 2000
 
 
 @dataclass(frozen=True)
@@ -173,6 +177,15 @@ def main() -> int:
                     dist = histogram_distance(base, hue_histogram(row_frames[col]))
                     if dist > MAX_HUE_DISTANCE:
                         failures.append(f"{state} frame {col}: hue drift vs frame 0 (distance {dist:.2f} > {MAX_HUE_DISTANCE})")
+                if state in RUN_ROWS:
+                    for col in range(1, FRAMES_PER_STATE):
+                        lower = slice(FRAME_H // 2, FRAME_H)
+                        diff = np.abs(row_frames[col][lower] - row_frames[col - 1][lower]).sum(axis=-1) > 0.16
+                        motion = int(diff.sum())
+                        if motion < MIN_LEG_MOTION_PIXELS:
+                            failures.append(
+                                f"{state} frame {col}: walking in place (leg motion {motion} px < {MIN_LEG_MOTION_PIXELS})"
+                            )
 
     if failures:
         print("PET PACK INVALID:")

@@ -9,13 +9,13 @@ Frame numbering below is zero-based. “Position 3” means column 3 (the fourth
 | Row/state | Shipped art |
 | --- | --- |
 | 0 idle | Six approved nery-sleeping bob frames; eyes already closed, so no extra blink. |
-| 1 running-right | Existing six real generated walk drawings, existing horizontal flip preserved. |
-| 2 running-left | Existing six real generated walk drawings, unchanged. |
+| 1 running-right | Stride/passing walk cycle: frames from `stride-a.png` (wide stride) and `stride-b.png` (passing), with the mirrored stride providing leg alternation; horizontal flip preserved for the right-facing row. |
+| 2 running-left | Same stride/passing cycle, unflipped (strict left profile, one eye visible in every frame). |
 | 3 waving | Six newly generated full-body right-arm wave drawings from wave/01–06.png; no flipped art. |
 | 4 jumping | Six newly generated crouch, launch, apex, descent/landing approach, landing crouch, settle drawings from jump/01–06.png; no flipped art. |
 | 5 failed | Approved thinking bob; frame 3 uses generated half-closed eyelids composited into the approved pose. |
 | 6 waiting | Approved coffee bob; frame 3 uses generated gentle eye-squeeze patches in the approved pose. |
-| 7 running | Existing six real generated walk drawings, unchanged. |
+| 7 running | Same stride/passing walk cycle as the running-left row (unflipped). |
 | 8 review | Approved cat bob; frame 3 uses generated closed-eyelid patches in the approved pose. |
 
 No signature-gate fallback frames were necessary. Approved bob frames above are
