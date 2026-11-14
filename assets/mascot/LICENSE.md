@@ -38,7 +38,7 @@ Unless the rights holder grants separate, express written permission, you may **
 
 ## 4. Separation from the software license
 
-The **Mnerys software code** is licensed separately under the [GNU Affero General Public License v3.0](../../LICENSE), subject to notices and obligations covering inherited and third-party works.
+The **Mnerys software code** is licensed separately under the GNU Affero General Public License v3.0 (see the Mnerys repository), subject to notices and obligations covering inherited and third-party works.
 
 **The AGPL-3.0 grant for code does not extend to the proprietary Nery Mizuki assets.** This notice imposes no additional conditions on reuse, modification or distribution of AGPL-covered code by itself.
 
