@@ -1,4 +1,12 @@
+<p align="center">
+  <img src="assets/mascot/nery-mizuki-avatar.webp" width="180" alt="Nery Mizuki, mascot of Mnerys" />
+</p>
+
 # Nery Mizuki
+
+<p align="center">
+  <em>© 2026 Yuri Cunha. All rights reserved. Proprietary mascot asset license (<a href="assets/mascot/LICENSE.md">v1.1</a>).</em>
+</p>
 
 The official character home of **Nery Mizuki**, the mascot of [Mnerys](https://github.com/isyuricunha/mnerys) ("Built to be yours") and of Yuri Cunha's web properties.
 
