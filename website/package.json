@@ -1,0 +1,31 @@
+{
+  "name": "nery-mizuki-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "dev": "astro dev",
+    "lint": "eslint .",
+    "check": "astro check",
+    "prebuild": "node scripts/prepare-assets.mjs",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "7.4.12",
+    "@astrojs/sitemap": "latest",
+    "@fontsource-variable/geist": "latest",
+    "lucide-static": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "typescript": "6.0.3",
+    "eslint": "latest",
+    "@eslint/js": "latest",
+    "eslint-plugin-astro": "latest",
+    "eslint-plugin-jsx-a11y": "latest",
+    "typescript-eslint": "latest",
+    "globals": "latest"
+  }
+}

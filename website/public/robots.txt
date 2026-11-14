@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nery.yuricunha.com/sitemap-index.xml
