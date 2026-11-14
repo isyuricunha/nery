@@ -12,12 +12,10 @@ pet and the Hermes pet loader):
   ignored by renderers.
 - pet.json carries id/displayName/description/spriteVersionNumber/spritesheetPath.
 
-Derivation policy: every frame is derived from the APPROVED kit poses only.
-Static life (breathing bob) is produced with PIL pixel shifts, so the character
-cannot drift. AI-generated pose frames (blink, wave arm, walk cycle) are read
-from frames-generated/<state>/ when present and must pass the validator's
-character-consistency gate; until then walk-family rows reuse an approved pose
-with a horizontal shuffle, clearly marked as placeholders in the changelog.
+Derivation policy: approved poses supply idle and the portrait states. Curated
+AI-generated walk, wave and jump drawings supply motion states. The fourth
+portrait frame overlays generated eyelids on the approved pose. Every shipped
+frame must pass validate_petpack.py. See pet/FRAME-NOTES.md for provenance.
 
 Usage: python3 scripts/build_petpack.py [--out PET_DIR]
 """
@@ -51,14 +49,14 @@ TRANSPARENT = KIT / "transparent"
 # reads as motion until real walk frames replace it.
 ROW_PLANS: dict[str, dict[str, str]] = {
     "idle": {"pose": "nery-sleeping.png", "mode": "bob"},
-    "running-right": {"pose": "nery-fullbody.png", "mode": "shuffle", "facing": "right"},
-    "running-left": {"pose": "nery-fullbody.png", "mode": "shuffle", "facing": "left"},
-    "waving": {"pose": "nery-happy.png", "mode": "bob"},
-    "jumping": {"pose": "nery-happy.png", "mode": "hop"},
-    "failed": {"pose": "nery-thinking.png", "mode": "bob"},
-    "waiting": {"pose": "nery-coffee.png", "mode": "bob"},
-    "running": {"pose": "nery-fullbody.png", "mode": "shuffle", "facing": "right"},
-    "review": {"pose": "nery-with-cat.png", "mode": "bob"},
+    "running-right": {"mode": "frames", "frames": "walk", "flip": "true"},
+    "running-left": {"mode": "frames", "frames": "walk", "flip": "false"},
+    "waving": {"mode": "frames", "frames": "wave", "flip": "false"},
+    "jumping": {"mode": "frames", "frames": "jump", "flip": "false"},
+    "failed": {"pose": "nery-thinking.png", "mode": "bob", "blink": "failed"},
+    "waiting": {"pose": "nery-coffee.png", "mode": "bob", "blink": "waiting"},
+    "running": {"mode": "frames", "frames": "walk", "flip": "false"},
+    "review": {"pose": "nery-with-cat.png", "mode": "bob", "blink": "review"},
 }
 
 
@@ -97,6 +95,47 @@ def paste_anchored(frame: Image.Image, pose: Image.Image, dx: int = 0, dy: int =
     frame.alpha_composite(pose, (x, y))
 
 
+def load_frame_set(set_name: str, flip: bool) -> list[Image.Image]:
+    """Load a curated frame sequence with ONE constant scale for the whole cycle.
+
+    The scale comes from frame 1's body height so the character never changes
+    size between frames (per-frame fitting would make her pulse while walking).
+    """
+    frames_dir = REPO_ROOT / "pet" / "frames-generated" / set_name
+    paths = sorted(frames_dir.glob("*.png"))
+    if len(paths) < FRAMES_PER_STATE:
+        raise SystemExit(f"frame set '{set_name}' has {len(paths)} frames, need {FRAMES_PER_STATE}")
+    frames = [Image.open(p).convert("RGBA") for p in paths[:FRAMES_PER_STATE]]
+    if set_name in {"wave", "jump"}:
+        # Shared scale preserves head size; fit the tallest/widest cycle pose.
+        boxes = [visible_bbox(frame) for frame in frames]
+        height = 164 if set_name == "jump" else 180
+        scale = min(height / max(b[3]-b[1] for b in boxes),
+                    174 / max(b[2]-b[0] for b in boxes), 1.0)
+        result = []
+        lifts = [0, -12, -22, -12, 0, 0] if set_name == "jump" else [0]*6
+        for source, lift in zip(frames, lifts):
+            body = source.resize((round(source.width*scale), round(source.height*scale)), Image.Resampling.LANCZOS)
+            if flip:
+                body = ImageOps.mirror(body)
+            frame = Image.new("RGBA", (FRAME_W, FRAME_H))
+            paste_anchored(frame, body, dy=lift)
+            result.append(frame)
+        return result
+    bbox = visible_bbox(frames[0])
+    body_h = bbox[3] - bbox[1]
+    scale = min(1.0, (FRAME_H - 28) / body_h)
+    sized: list[Image.Image] = []
+    for frame in frames:
+        if scale < 1.0:
+            frame = frame.resize(
+                (max(1, round(frame.width * scale)), max(1, round(frame.height * scale))),
+                Image.Resampling.LANCZOS,
+            )
+        sized.append(ImageOps.mirror(frame) if flip else frame)
+    return sized
+
+
 def derive_frames(pose: Image.Image, mode: str, facing: str = "right") -> list[Image.Image]:
     """Produce FRAMES_PER_STATE frames for one row from a single approved pose."""
     pose = scaled_to_frame_height(pose, FRAME_H - 28)
@@ -124,8 +163,15 @@ def build_atlas() -> Image.Image:
     atlas = Image.new("RGBA", ATLAS_SIZE, (0, 0, 0, 0))
     for row_index, state in enumerate(CODEX_STATE_ROWS):
         plan = ROW_PLANS[state]
-        pose = load_pose(plan["pose"])
-        frames = derive_frames(pose, plan["mode"], plan.get("facing", "right"))
+        if plan["mode"] == "frames":
+            frames = load_frame_set(plan["frames"], plan.get("flip") == "true")
+        else:
+            pose = load_pose(plan["pose"])
+            frames = derive_frames(pose, plan["mode"], plan.get("facing", "right"))
+        if plan.get("blink"):
+            blink_path = REPO_ROOT / "pet" / "frames-generated" / "blink" / "variants" / (plan["blink"] + ".png")
+            blink = Image.open(blink_path).convert("RGBA")
+            frames[3] = derive_frames(blink, "bob")[3]
         for col, frame in enumerate(frames[:FRAMES_PER_STATE]):
             atlas.alpha_composite(frame, (col * FRAME_W, row_index * FRAME_H))
     return atlas
