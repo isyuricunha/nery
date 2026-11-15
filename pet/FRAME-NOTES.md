@@ -1,68 +1,139 @@
-# Nery Mizuki final frame provenance
+# Nery Mizuki — Petdex motion audit and sources
 
-Pack: `nery/pet.json` and `nery/spritesheet.webp`; diagnostic PNG also included.
-Atlas: 1536×2288 RGBA, 8×11 cells of 192×208. Nine states use six frames each;
-columns 6–7 and rows 9–10 are transparent. Playback uses the requested approximately
-183 ms per frame in the Petdex player; the specified pet.json schema has no timing field.
-Frame numbering below is zero-based. “Position 3” means column 3 (the fourth frame).
+This document records the frame-by-frame motion review, source selection,
+technical validation and **known remaining visual limitations**. New motion
+assets are a local working candidate until the rights holder reviews them.
+Original mascot drawings are preserved in `assets/mascot/kit-v1/`.
 
-| Row/state | Shipped art |
-| --- | --- |
-| 0 idle | Six approved nery-sleeping bob frames; eyes already closed, so no extra blink. |
-| 1 running-right | Stride/passing walk cycle: frames from `stride-a.png` (wide stride) and `stride-b.png` (passing), with the mirrored stride providing leg alternation; horizontal flip preserved for the right-facing row. |
-| 2 running-left | Same stride/passing cycle, unflipped (strict left profile, one eye visible in every frame). |
-| 3 waving | Six newly generated full-body right-arm wave drawings from wave/01–06.png; no flipped art. |
-| 4 jumping | Six newly generated crouch, launch, apex, descent/landing approach, landing crouch, settle drawings from jump/01–06.png; no flipped art. |
-| 5 failed | Approved thinking bob; frame 3 uses generated half-closed eyelids composited into the approved pose. |
-| 6 waiting | Approved coffee bob; frame 3 uses generated gentle eye-squeeze patches in the approved pose. |
-| 7 running | Same stride/passing walk cycle as the running-left row (unflipped). |
-| 8 review | Approved cat bob; frame 3 uses generated closed-eyelid patches in the approved pose. |
+## Native format and website animation
 
-No signature-gate fallback frames were necessary. Approved bob frames above are
-intentional requested sources, not failed-generation replacements. Four additional
-fullbody/happy blink drawings are retained in frames-generated/blink/01,02,04,05.png;
-they are not substituted into unrelated portrait poses. Pose-matched composite
-variants live in blink/variants/. All non-eye pixels in these variants stay approved.
+- **Petdex v2 atlas:** `pet/nery/spritesheet.webp`; 1536×2288,
+  eight columns and eleven rows, 192×208 cells. States have frame counts
+  **6 / 8 / 8 / 4 / 5 / 8 / 6 / 6 / 6** in rows 0–8.
+- **Website-exclusive walking atlas:** `pet/nery/walk-16.webp`; 1536×832,
+  eight columns and four rows. Rows 0–1 contain 16 walking-right drawings;
+  rows 2–3 contain 16 walking-left drawings. The asset uses lossless WebP
+  transparency to avoid compression color fringes.
+- The Petdex atlas receives **every second** web walk drawing (8 per
+  direction). The native consumer cannot access the website's 16
+  frames without its own extension. Frame index 0 in the site is the same
+  pose as frame 0 in native; the relative order and scale are reproducible.
+- The website displays 16 drawn poses per gait cycle (60 ms per drawing),
+  matched to 64 px per cycle and 66.7 px/s page movement. There is **no
+  frame-to-frame opacity crossfade** of legs, motion-flow reconstruction,
+  partial-leg horizontal reflection, or random face replacement.
+- `prefers-reduced-motion` displays still poses. State-to-state fades
+  are restricted to non-walking states and do not blend right and left
+  walking directions. Cache-busting hashes are generated for both
+  WebP atlases during the site build.
 
-## Generation and extraction
+Petdex v2's optional cursor-look grid in rows 9–10 (16 cells) **remains
+transparent**. Full head-look tracking is not implemented.
 
-Used the user-specified Agnes img2img CLI, eight API calls total (below ten).
-Exact prompts are preserved in frames-generated/prompts.json. References were the
-approved happy/fullbody poses and character sheet; each portrait edit additionally
-used its own approved thinking/coffee/cat reference. Raw outputs remain in strips/.
-No credentials were printed or copied.
+## Audit by action row
 
-The first wave sheet returned 4×2 rather than the requested 3×2. It contained eight
-complete right-arm poses; six real drawings were curated in order: top columns
-0,1,2, then bottom columns 2,1,0. The retry was rejected for switching arms and
-including non-wave poses. The first jump sheet lacked a center-bottom character;
-the complete 3×2 retry supplies all six final jump drawings. No empty cell ships.
+| Row | State | Source and actual motion | Remaining concern |
+| --- | --- | --- | --- |
+| 0 | `idle` (6) | Approved full-body upright stance; tiny upper-body breathing | Almost static by design, not a sleeping/giant close-up |
+| 1 | `running-right` (8) | **Whole-frame mirror** of left gait keys | Native 8-key stepping is less smooth than the website |
+| 2 | `running-left` (8) | Eight separately drawn keys selected from a 16-pose website cycle | A few lower-body transitions are still abrupt |
+| 3 | `waving` (4) | Four raised-hand and arm poses | Motion relatively subtle; existing wave source preserved |
+| 4 | `jumping` (5) | Crouch, launch, apex, descent, stand | Silhouette changes quickly between some keys |
+| 5 | `failed` (8) | Surprise → *new in-between pose with lowered hands* → sad posture | Two main expressions remain visibly distinct |
+| 6 | `waiting` (6) | Hands clasped → *new fists-apart in-between* → palms open → return | Hand/head movement is intentionally distinct from waving |
+| 7 | `running` (6) | Agent **working** at laptop (typing), **not walking** | Subtle finger movements |
+| 8 | `review` (6) | Clipboard review and pencil movement | Subtle facial/hand movement |
 
-scripts/split_cells.py supplies edge-connected flood-fill extraction, not global
-chroma keying. scripts/prepare_pet_frames.py records the curated cell selection,
-uses a conservative six-level background tolerance to preserve dark hoodies,
-and applies generated eyelids through feathered local masks on approved poses.
-One constant scale per cycle preserves relative sizes; jump adds a vertical arc.
-The running-row build path is unchanged.
+## Walk source audit: all 16 frames
 
-## Visual qualifications
+The prior sprite cycle repeated 4–5 unrelated generated drawings. Specifically,
+the return from frame 7 to frame 0 and intermediate poses jumped abruptly,
+feet lifted without apparent support, and generated face/hair edges changed
+between poses. A white-background input also caused visible white hair/shoe
+fringes. The old `opposite_stride()` had *flipped only the legs*, reversing
+shoe anatomy; the new builder does not use it.
 
-- All six wave frames are real separate generated drawings, but the wrist/arm
-  differences are subtle; the movement reads as a gentle wave rather than broad swings.
-- Jump frame 3 (fourth frame) reads more like a low landing approach/lunge than
-  an unmistakably airborne fall. This is the main pose uncertainty.
-- Coffee and cat already have closed eyes; their inserted eye-squeeze changes
-  are intentionally subtle. The thinking blink is more visible.
-- The new wave proportions are slightly taller than the jump drawings; within
-  each sequence a constant scale is used. The signature gate passes every frame,
-  but it does not prove perfect anatomical or stylistic identity.
+The proposed 16-pose sequence was created by **redrawing every pose**
+based on a walking guide, extracting alpha once, applying a shared scale and
+ground baseline, and compositing the **same exact approved upper-body
+pixels** onto every frame, leaving the individually drawn legs intact.
 
-## Validation
+Frame numbers below refer to
+`pet/frames-generated/semantic-v3/walk/00.png` – `15.png`.
 
-python3 scripts/build_petpack.py && python3 scripts/validate_petpack.py exited 0.
+| Frame | Visual movement | Frame | Visual movement |
+| --- | --- | --- | --- |
+| 00 | Wide contact / transfer | 08 | Other-leg forward contact |
+| 01 | Contact deceleration | 09 | Push-off begins |
+| 02 | Knee load with rear heel rising | 10 | Heel lift and leg transfer |
+| 03 | Feet pass near each other | 11 | Trailing leg swinging |
+| 04 | Swinging knee lifted | 12 | Free leg extends forward |
+| 05 | Leg swing continuing | 13 | Next foot advances |
+| 06 | Supporting foot while lifted knee passes | 14 | Forward knee raised |
+| 07 | Forward foot steps into contact | 15 | Return toward start contact |
 
-    PET PACK VALID: /home/ubuntu/ella-repos/nery/pet/nery
-      atlas 1536x2288 | 9 states x 6 frames | pet.json ok
+**Quality metrics on the website's 16-key lower-body silhouettes**
+(`scripts/validate_walk_animation.py`): adjacent silhouette IoU averages
+~0.45; the wrap from frame 15 → 0 is ~0.83. Some transitions still have
+low overlap (~0.16, notably keys 11–12 and 12–13), so these must be
+**visually inspected**, not called perfect. Gait art from individual model
+redraws is not the same as a studio-authored 2D rig.
 
-Additional decoded-WebP checks confirmed transparent unused columns and rows 9–10.
-Visual contact sheet: pet/preview/final-contact-sheet.jpg.
+I evaluated two other candidate methods, **optical-flow interpolation** and
+an ad hoc joint-warp leg rig, but rejected them after visual inspection:
+they caused double shoes, anatomy breaks or ugly knees. The resulting
+experimental artifacts live only in `~/chatgpt/nery/probes/` and are **not
+integrated into the project**. A sequence reordered for numerical similarity
+was rejected because silhouette similarity is not proof of correct step
+order.
+
+## Sources
+
+- Approved source kit: `assets/mascot/kit-v1/transparent/`.
+- Original generated motion sources and prompts: `pet/frames-generated/`
+  (not modified or deleted).
+- Prior curated semantic poses:
+  `pet/frames-generated/semantic-v2/` (preserved for comparison).
+- New **16×192×208 RGBA walking keys**:
+  `pet/frames-generated/semantic-v3/walk/`.
+- New intermediate `failed`/`waiting` keys:
+  `pet/frames-generated/semantic-v3/failed/transition.png`,
+  `pet/frames-generated/semantic-v3/waiting/transition.png`.
+- Full raw resolution generation outputs, contact sheets, timeline tests,
+  visual screenshots and exploratory rejects are in server work directory
+  `~/chatgpt/nery/images/`, `~/chatgpt/nery/probes/` and
+  `~/chatgpt/nery/tests/`, separately from production files.
+- A pre-change backup of build logic and original WebP is under
+  `~/chatgpt/nery/backups/pre-walk-v3/`.
+
+## Deterministic build and QA
+
+Run from repo root:
+
+```bash
+python3 scripts/build_petpack.py
+python3 scripts/validate_petpack.py
+python3 scripts/validate_walk_animation.py
+python3 scripts/test_petpack_regressions.py
+python3 scripts/render_pet_previews.py
+cd website && pnpm lint && pnpm check && pnpm build
+```
+
+`scripts/build_walk_animation.py` can also regenerate
+`pet/nery/walk-16.webp` alone.
+
+The validators check: atlas dimensions and alpha, color identity, grounded
+shoe support in every walk key, untouched canonical face pixels,
+full-body left/right mirroring, alpha edge fringes, 16-key source ↔
+native ↔ web consistency, loop closure and semantic states. Negative
+regressions introduce known defects and require rejection.
+
+**Visual QA in a real browser** uses
+`~/chatgpt/nery/tests/browser-qa.mjs` with local headless Chromium,
+including page JavaScript errors, actual canvas samples for walking
+and screenshots of the other action states. Review actual animations
+in `pet/preview/walk-16.gif` and per-state GIFs. These static and
+automated checks do not certify subjective naturalness; the final
+quality decision belongs to the rights holder.
+
+No commit, push or production deploy is performed by these scripts.

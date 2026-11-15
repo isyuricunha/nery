@@ -73,6 +73,31 @@ Known artwork limitations (native sizes, alpha edges) are documented in [docs/AR
 - **Mnerys** (production): welcome, onboarding, empty states and interface accents.
 - **Yuri Cunha's web properties** (yuricunha.com and its subdomains): authorized in the license v1.1 for the rights holder's own properties.
 
+## Animated Petdex pack
+
+The Petdex v2 pet is in [`pet/nery/`](pet/nery/), with nine animation
+states (6/8/8/4/5/8/6/6/6 native frames) and a companion `pet.json`.
+The web preview additionally uses **16 individually drawn walking frames
+per direction** from `walk-16.webp`, without blending overlapping shoes.
+The native Petdex renderer uses its fixed eight walking frames. The
+optional 16 cursor-look cells (rows 9–10) are not yet illustrated.
+
+Rebuild and check both animations:
+
+```bash
+python3 scripts/build_petpack.py
+python3 scripts/validate_petpack.py
+python3 scripts/validate_walk_animation.py
+python3 scripts/test_petpack_regressions.py
+python3 scripts/render_pet_previews.py
+```
+
+See [full frame audit, sources and visual limitations](pet/FRAME-NOTES.md)
+and the [16-frame web walking preview](pet/preview/walk-16.gif).
+The [website preview](website/) has its own timing and state transitions;
+these browser-only enhancements are not transferred into third-party
+Petdex clients.
+
 ## License
 
 The Nery Mizuki character and artwork are **proprietary**: **Copyright (c) 2026 Yuri Cunha, all rights reserved**, under the [Nery Mizuki Proprietary Mascot Asset License](assets/mascot/LICENSE.md). The license permits installation and display within an authorized Mnerys instance, and (since v1.1) use within Yuri Cunha's own properties as distributed by the rights holder through this official repository. Redistribution, independent reuse, packaging and derivative artwork require the rights holder's express written permission. This is **not** an open-source image license, and it is separate from the AGPL-3.0 license of the Mnerys code.

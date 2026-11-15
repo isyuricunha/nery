@@ -1,207 +1,227 @@
 #!/usr/bin/env python3
-"""Build the Nery Mizuki Petdex pet pack (pet.json + spritesheet atlas).
+"""Build the Nery Mizuki Petdex v2 atlas with anatomically intact keyframes.
 
-Petdex/Codex pet format (verified against petdex.dev docs, the Boba reference
-pet and the Hermes pet loader):
+Frames: 8 x 11 cells of 192x208 (1536x2288). State frame counts:
+idle 6, right 8, left 8, wave 4, jump 5, failed 8, waiting 6,
+working 6, review 6. Rows 9-10 reserved for future look art.
 
-- Frames are 192x208 (FRAME_W x FRAME_H), arranged in an 8-column grid.
-- The v2 atlas is 1536x2288 (8 cols x 11 rows); rows 0-8 carry the canonical
-  state rows: idle, running-right, running-left, waving, jumping, failed,
-  waiting, running, review. Rows 9-10 stay transparent in this pack.
-- Each state uses the first 6 columns (petdex ``steps(6)``); extra columns are
-  ignored by renderers.
-- pet.json carries id/displayName/description/spriteVersionNumber/spritesheetPath.
-
-Derivation policy: approved poses supply idle and the portrait states. Curated
-AI-generated walk, wave and jump drawings supply motion states. The fourth
-portrait frame overlays generated eyelids on the approved pose. Every shipped
-frame must pass validate_petpack.py. See pet/FRAME-NOTES.md for provenance.
-
-Usage: python3 scripts/build_petpack.py [--out PET_DIR]
+Approved character art + *curated* semantic key poses are the only inputs;
+this does NOT modify original images. Walking never horizontally flips
+isolated limbs. For reverse direction, mirror the COMPLETE normalized figure.
 """
-
 from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
+from typing import Iterable
 
+import numpy as np
 from PIL import Image, ImageOps
+from build_walk_animation import native_frames, build_smooth_walk_atlas
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-KIT = REPO_ROOT / "assets" / "mascot" / "kit-v1"
+ROOT=Path(__file__).resolve().parents[1]
+KIT=ROOT/"assets/mascot/kit-v1/transparent"
+KEYS=ROOT/"pet/frames-generated/semantic-v2"
+OLD=ROOT/"pet/frames-generated"
+W,H=192,208
+COLS,ROWS=8,11
+ORDER=("idle","running-right","running-left","waving","jumping",
+       "failed","waiting","running","review")
+COUNTS=(6,8,8,4,5,8,6,6,6)
 
-FRAME_W, FRAME_H = 192, 208
-ATLAS_COLS, ATLAS_ROWS = 8, 11
-ATLAS_SIZE = (FRAME_W * ATLAS_COLS, FRAME_H * ATLAS_ROWS)
-FRAMES_PER_STATE = 6
-
-CODEX_STATE_ROWS = [
-    "idle", "running-right", "running-left", "waving", "jumping",
-    "failed", "waiting", "running", "review",
-]
-
-TRANSPARENT = KIT / "transparent"
-
-# Row -> derivation plan. "bob" rows shift the pose a couple of pixels between
-# frames; "shuffle" rows add a small horizontal sway so the placeholder still
-# reads as motion until real walk frames replace it.
-ROW_PLANS: dict[str, dict[str, str]] = {
-    "idle": {"pose": "nery-sleeping.png", "mode": "bob"},
-    "running-right": {"mode": "frames", "frames": "walk", "flip": "true"},
-    "running-left": {"mode": "frames", "frames": "walk", "flip": "false"},
-    "waving": {"mode": "frames", "frames": "wave", "flip": "false"},
-    "jumping": {"mode": "frames", "frames": "jump", "flip": "false"},
-    "failed": {"pose": "nery-thinking.png", "mode": "bob", "blink": "failed"},
-    "waiting": {"pose": "nery-coffee.png", "mode": "bob", "blink": "waiting"},
-    "running": {"mode": "frames", "frames": "walk", "flip": "false"},
-    "review": {"pose": "nery-with-cat.png", "mode": "bob", "blink": "review"},
-}
-
-
-def load_pose(name: str) -> Image.Image:
-    path = TRANSPARENT / name
-    if not path.exists():
-        raise SystemExit(f"approved pose missing: {path}")
+def image(path:Path)->Image.Image:
+    if not path.is_file(): raise FileNotFoundError(path)
     return Image.open(path).convert("RGBA")
 
+def bbox(im:Image.Image)->tuple[int,int,int,int]:
+    bounds=im.getchannel("A").getbbox()
+    if bounds is None: raise ValueError("Empty sprite frame")
+    return bounds
 
-def visible_bbox(image: Image.Image) -> tuple[int, int, int, int]:
-    """Bounding box of non-transparent pixels; hard failure when empty."""
-    bbox = image.getchannel("A").getbbox()
-    if bbox is None:
-        raise SystemExit("pose/frame has no visible pixels")
-    return bbox
+def cell(im:Image.Image, target_height:int, lift:int=0)->Image.Image:
+    b=bbox(im)
+    scale=min(1.,target_height/(b[3]-b[1]),176/(b[2]-b[0]))
+    if scale!=1:
+        im=im.resize((max(1,round(im.width*scale)),max(1,round(im.height*scale))),
+                     Image.Resampling.LANCZOS)
+    b=bbox(im)
+    result=Image.new("RGBA",(W,H))
+    result.alpha_composite(im,(round((W-b[2]+b[0])/2-b[0]),
+                               H-12-b[3]+lift))
+    return result
 
+def warped(im:Image.Image,dx:float=0,dy:float=0,
+           cx:float=94,cy:float=60,rx:float=40,ry:float=55)->Image.Image:
+    """Tiny localized breathing/hand/head motion; no limb mirroring.
 
-def scaled_to_frame_height(image: Image.Image, target_h: int) -> Image.Image:
-    """Scale the pose so its body fits *target_h* px, never upscaling past 1.0."""
-    bbox = visible_bbox(image)
-    body_h = bbox[3] - bbox[1]
-    scale = min(1.0, target_h / body_h)
-    if scale < 1.0:
-        new_size = (max(1, round(image.width * scale)), max(1, round(image.height * scale)))
-        image = image.resize(new_size, Image.Resampling.LANCZOS)
-    return image
-
-
-def paste_anchored(frame: Image.Image, pose: Image.Image, dx: int = 0, dy: int = 0) -> None:
-    """Paste the pose bottom-center anchored, feet resting near the frame floor."""
-    bbox = visible_bbox(pose)
-    body_w, body_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    x = (FRAME_W - body_w) // 2 - bbox[0] + dx
-    y = FRAME_H - 10 - body_h - bbox[1] + dy  # 10 px breathing room below the feet
-    frame.alpha_composite(pose, (x, y))
-
-
-def load_frame_set(set_name: str, flip: bool) -> list[Image.Image]:
-    """Load a curated frame sequence with ONE constant scale for the whole cycle.
-
-    The scale comes from frame 1's body height so the character never changes
-    size between frames (per-frame fitting would make her pulse while walking).
+    Fully transparent colors are sampled using premultiplied alpha.
+    For walking, the hip/feet are NOT warped by this upper-body field.
     """
-    frames_dir = REPO_ROOT / "pet" / "frames-generated" / set_name
-    paths = sorted(frames_dir.glob("*.png"))
-    if len(paths) < FRAMES_PER_STATE:
-        raise SystemExit(f"frame set '{set_name}' has {len(paths)} frames, need {FRAMES_PER_STATE}")
-    frames = [Image.open(p).convert("RGBA") for p in paths[:FRAMES_PER_STATE]]
-    if set_name in {"wave", "jump"}:
-        # Shared scale preserves head size; fit the tallest/widest cycle pose.
-        boxes = [visible_bbox(frame) for frame in frames]
-        height = 164 if set_name == "jump" else 180
-        scale = min(height / max(b[3]-b[1] for b in boxes),
-                    174 / max(b[2]-b[0] for b in boxes), 1.0)
-        result = []
-        lifts = [0, -12, -22, -12, 0, 0] if set_name == "jump" else [0]*6
-        for source, lift in zip(frames, lifts):
-            body = source.resize((round(source.width*scale), round(source.height*scale)), Image.Resampling.LANCZOS)
-            if flip:
-                body = ImageOps.mirror(body)
-            frame = Image.new("RGBA", (FRAME_W, FRAME_H))
-            paste_anchored(frame, body, dy=lift)
-            result.append(frame)
-        return result
-    bbox = visible_bbox(frames[0])
-    body_h = bbox[3] - bbox[1]
-    scale = min(1.0, (FRAME_H - 28) / body_h)
-    sized: list[Image.Image] = []
-    for frame in frames:
-        if scale < 1.0:
-            frame = frame.resize(
-                (max(1, round(frame.width * scale)), max(1, round(frame.height * scale))),
-                Image.Resampling.LANCZOS,
-            )
-        sized.append(ImageOps.mirror(frame) if flip else frame)
-    return sized
+    if not dx and not dy:return im.copy()
+    pixels=np.asarray(im,dtype=np.float32)/255.
+    yy,xx=np.indices((H,W),dtype=np.float32)
+    weight=np.exp(-.5*(((xx-cx)/rx)**2+((yy-cy)/ry)**2))
+    ux=np.clip(xx-dx*weight,0,W-1)
+    vy=np.clip(yy-dy*weight,0,H-1)
+    x0=ux.astype(np.int32); y0=vy.astype(np.int32)
+    x1=np.minimum(x0+1,W-1); y1=np.minimum(y0+1,H-1)
+    fx=(ux-x0)[...,None]; fy=(vy-y0)[...,None]
+    alpha=pixels[:,:,3:4]
+    rgb=pixels[:,:,:3]*alpha
+    def sample(data):
+        top=data[y0,x0]*(1-fx)+data[y0,x1]*fx
+        bot=data[y1,x0]*(1-fx)+data[y1,x1]*fx
+        return top*(1-fy)+bot*fy
+    a=sample(alpha);p=sample(rgb)
+    colors=np.divide(p,a,out=np.zeros_like(p),where=a>1e-6)
+    return Image.fromarray(np.uint8(np.clip(np.dstack((colors,a))*255,0,255).round()),"RGBA")
 
+def load(family:str,name:str)->Image.Image:
+    im=image(KEYS/family/f"{name}.png")
+    if im.size!=(W,H): raise ValueError(f"{family}/{name} is {im.size}")
+    return im
 
-def derive_frames(pose: Image.Image, mode: str, facing: str = "right") -> list[Image.Image]:
-    """Produce FRAMES_PER_STATE frames for one row from a single approved pose."""
-    pose = scaled_to_frame_height(pose, FRAME_H - 28)
-    if mode == "bob":
-        offsets = [(0, 0), (0, -2), (0, -3), (0, -2), (0, 0), (0, -1)]
-    elif mode == "hop":
-        offsets = [(0, 0), (0, -6), (0, -10), (0, -6), (0, 0), (0, -2)]
-    elif mode == "shuffle":
-        sway = [0, -3, -5, 0, 3, 5]
-        lift = [0, -2, -3, 0, -2, -3]
-        offsets = list(zip(sway, lift))
-    else:
-        raise SystemExit(f"unknown derivation mode: {mode}")
+def transition(family:str)->Image.Image:
+    im=image(ROOT/"pet/frames-generated/semantic-v3"/family/"transition.png")
+    if im.size!=(W,H):
+        raise ValueError(f"{family}/transition is {im.size}, expected {(W,H)}")
+    return im
 
-    frames: list[Image.Image] = []
-    for dx, dy in offsets:
-        frame = Image.new("RGBA", (FRAME_W, FRAME_H), (0, 0, 0, 0))
-        body = ImageOps.mirror(pose) if facing == "left" else pose
-        paste_anchored(frame, body, dx, dy)
-        frames.append(frame)
+def gait(right:bool)->list[Image.Image]:
+    """Eight true sequential keys sampled from the curated 16-frame walk.
+
+    The face, hair and upper body are pixel-identical across all 16 sources;
+    only pose-specific drawn legs change. No frame warps or half-body flips.
+    """
+    return native_frames(right)
+
+def idle()->list[Image.Image]:
+    stand=cell(image(KIT/"nery-fullbody.png"),177)
+    # Feet stay planted; only upper head, hair and torso breathe gently.
+    movement=((0,0),(0,-1),(0,-2),(0,-1),(0,0),(0,1))
+    return [warped(stand,dx,dy,cy=66,rx=60,ry=67) for dx,dy in movement]
+
+def waving()->list[Image.Image]:
+    raw=[image(OLD/f"wave/{n:02}.png") for n in (1,2,4,6)]
+    boxes=[bbox(im) for im in raw]
+    scale=min(1.,179/max(b[3]-b[1] for b in boxes),
+                175/max(b[2]-b[0] for b in boxes))
+    frames=[]
+    for im,shift in zip(raw,(-5,2,8,-4)):
+        size=(round(im.width*scale),round(im.height*scale))
+        scaled=im.resize(size,Image.Resampling.LANCZOS)
+        b=bbox(scaled)
+        result=Image.new("RGBA",(W,H))
+        result.alpha_composite(scaled,(round(W/2-(b[0]+b[2])/2),
+                                       H-12-b[3]))
+        frames.append(warped(result,dx=shift,cx=62,cy=55,rx=29,ry=35))
     return frames
 
+def jumping()->list[Image.Image]:
+    # End standing, not locked indefinitely into the crouch.
+    originals=[image(OLD/f"jump/{k:02}.png") for k in (1,2,3,3,6)]
+    boxes=[bbox(im) for im in originals]
+    factor=min(1.,166/max(b[3]-b[1] for b in boxes),
+                 176/max(b[2]-b[0] for b in boxes))
+    arc=(0,-10,-24,-9,0)
+    frames=[]
+    for im,lift in zip(originals,arc):
+        scaled=im.resize((round(im.width*factor),round(im.height*factor)),
+                          Image.Resampling.LANCZOS)
+        b=bbox(scaled)
+        result=Image.new("RGBA",(W,H))
+        result.alpha_composite(scaled,(round(W/2-(b[0]+b[2])/2),
+                                       H-12-b[3]+lift))
+        frames.append(result)
+    return frames
 
-def build_atlas() -> Image.Image:
-    atlas = Image.new("RGBA", ATLAS_SIZE, (0, 0, 0, 0))
-    for row_index, state in enumerate(CODEX_STATE_ROWS):
-        plan = ROW_PLANS[state]
-        if plan["mode"] == "frames":
-            frames = load_frame_set(plan["frames"], plan.get("flip") == "true")
-        else:
-            pose = load_pose(plan["pose"])
-            frames = derive_frames(pose, plan["mode"], plan.get("facing", "right"))
-        if plan.get("blink"):
-            blink_path = REPO_ROOT / "pet" / "frames-generated" / "blink" / "variants" / (plan["blink"] + ".png")
-            blink = Image.open(blink_path).convert("RGBA")
-            frames[3] = derive_frames(blink, "bob")[3]
-        for col, frame in enumerate(frames[:FRAMES_PER_STATE]):
-            atlas.alpha_composite(frame, (col * FRAME_W, row_index * FRAME_H))
+def failed()->list[Image.Image]:
+    shocked=load("failed","startle")
+    middle=transition("failed")
+    sad=load("failed","dejected")
+    # Surprise -> dejected. Two genuinely different expressions, no squat.
+    return [
+        shocked.copy(),
+        warped(shocked,-2,0,cx=96,cy=85,rx=57,ry=80),
+        middle.copy(),  # hands lowering, expression changing
+        sad.copy(),
+        warped(sad,0,1,cx=96,cy=80,rx=55,ry=75),
+        warped(sad,0,2,cx=96,cy=80,rx=55,ry=75),
+        warped(sad,0,1,cx=96,cy=80,rx=55,ry=75),
+        sad.copy(),
+    ]
+
+def waiting()->list[Image.Image]:
+    attentive=load("waiting","attentive")
+    middle=transition("waiting")
+    ask=load("waiting","ask")
+    # Held hands -> BOTH palms up -> held hands, not waving hello.
+    return [
+        attentive.copy(),
+        warped(attentive,0,-1,cx=93,cy=78,rx=63,ry=70),
+        middle.copy(),
+        ask.copy(),
+        middle.copy(),
+        warped(attentive,0,1,cx=93,cy=78,rx=63,ry=70),
+    ]
+
+def working()->list[Image.Image]:
+    typing=load("working","typing")
+    active=load("working","active")
+    return [
+        typing.copy(), active.copy(),
+        warped(active,1,0,cx=101,cy=128,rx=35,ry=26),
+        typing.copy(),
+        warped(typing,-1,0,cx=98,cy=127,rx=35,ry=26),
+        active.copy(),
+    ]
+
+def reviewing()->list[Image.Image]:
+    inspect=load("review","inspect")
+    mark=load("review","mark")
+    # Clipboard checking, with eyes/pen moving subtly, never a sad reaction.
+    return [
+        inspect.copy(),
+        warped(inspect,0,1,cx=93,cy=65,rx=54,ry=60),
+        mark.copy(),
+        warped(mark,0,-1,cx=91,cy=115,rx=30,ry=25),
+        mark.copy(),
+        inspect.copy(),
+    ]
+
+def build_atlas()->Image.Image:
+    rendered={
+        "idle":idle(), "running-right":gait(True),"running-left":gait(False),
+        "waving":waving(),"jumping":jumping(),"failed":failed(),
+        "waiting":waiting(),"running":working(),"review":reviewing(),
+    }
+    atlas=Image.new("RGBA",(W*COLS,H*ROWS))
+    for row,state in enumerate(ORDER):
+        seq=rendered[state]
+        if len(seq)!=COUNTS[row]:raise ValueError(f"{state} requires {COUNTS[row]} frames")
+        for col,im in enumerate(seq):
+            if im.size!=(W,H):raise ValueError(f"{state} frame {col} invalid {im.size}")
+            atlas.alpha_composite(im,(col*W,row*H))
     return atlas
 
-
-def write_pet_pack(out_dir: Path, atlas: Image.Image) -> None:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    atlas.save(out_dir / "spritesheet.webp", "WEBP", quality=90, method=6)
-    atlas.save(out_dir / "spritesheet.png", "PNG")
-    pet = {
-        "id": "nery",
-        "displayName": "Nery Mizuki",
-        "description": "Nery Mizuki, the official mascot of Mnerys ('Built to be yours'): a curious copper-haired chibi who keeps you company while your agent works.",
-        "spriteVersionNumber": 2,
-        "spritesheetPath": "spritesheet.webp",
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--out",type=Path,default=ROOT/"pet/nery")
+    a=p.parse_args()
+    atlas=build_atlas()
+    a.out.mkdir(parents=True,exist_ok=True)
+    atlas.save(a.out/"spritesheet.webp","WEBP",quality=92,method=6)
+    atlas.save(a.out/"spritesheet.png","PNG")
+    build_smooth_walk_atlas(a.out)
+    meta={
+        "id":"nery","displayName":"Nery Mizuki",
+        "description":"Nery Mizuki, the official mascot of Mnerys (\u0027Built to be yours\u0027): a curious copper-haired chibi who keeps you company while your agent works.",
+        "spriteVersionNumber":2,"spritesheetPath":"spritesheet.webp"
     }
-    (out_dir / "pet.json").write_text(json.dumps(pet, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (a.out/"pet.json").write_text(json.dumps(meta,indent=2,ensure_ascii=False)+"\n",
+                                    encoding="utf-8")
+    print("Built Nery v2:",atlas.size,"state frame counts:",dict(zip(ORDER,COUNTS)))
 
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out", type=Path, default=REPO_ROOT / "pet" / "nery", help="output pack directory")
-    args = parser.parse_args()
-    atlas = build_atlas()
-    write_pet_pack(args.out, atlas)
-    print(f"atlas: {atlas.size[0]}x{atlas.size[1]} ({ATLAS_COLS} cols x {ATLAS_ROWS} rows)")
-    print(f"states: {', '.join(CODEX_STATE_ROWS)}")
-    print(f"pack written to: {args.out}")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__=="__main__":
+    main()

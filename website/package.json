@@ -5,9 +5,10 @@
   "type": "module",
   "packageManager": "pnpm@12.18.0",
   "scripts": {
+    "predev": "node scripts/prepare-assets.mjs",
     "dev": "astro dev",
-    "lint": "eslint .",
-    "check": "astro check",
+    "lint": "node scripts/prepare-assets.mjs && eslint .",
+    "check": "node scripts/prepare-assets.mjs && astro check",
     "prebuild": "node scripts/prepare-assets.mjs",
     "build": "astro build",
     "preview": "astro preview"
