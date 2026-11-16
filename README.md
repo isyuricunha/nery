@@ -77,8 +77,10 @@ Known artwork limitations (native sizes, alpha edges) are documented in [docs/AR
 
 The Petdex v2 pet is in [`pet/nery/`](pet/nery/), with nine animation
 states (6/8/8/4/5/8/6/6/6 native frames) and a companion `pet.json`.
-The web preview additionally uses **16 individually drawn walking frames
-per direction** from `walk-16.webp`, without blending overlapping shoes.
+The web preview uses the full **motion v4** atlas: **12 drawn frames for
+each non-walking action and 16 per walking direction**, with shared timing
+in `motion.json` and no opacity blending between poses. A standalone
+walking atlas remains available as `walk-16.webp`.
 The native Petdex renderer uses its fixed eight walking frames. The
 optional 16 cursor-look cells (rows 9–10) are not yet illustrated.
 
@@ -88,12 +90,16 @@ Rebuild and check both animations:
 python3 scripts/build_petpack.py
 python3 scripts/validate_petpack.py
 python3 scripts/validate_walk_animation.py
+python3 scripts/validate_motion.py
 python3 scripts/test_petpack_regressions.py
 python3 scripts/render_pet_previews.py
 ```
 
-See [full frame audit, sources and visual limitations](pet/FRAME-NOTES.md)
-and the [16-frame web walking preview](pet/preview/walk-16.gif).
+See [full frame audit, sources and visual limitations](pet/FRAME-NOTES.md),
+the [all-state web preview](pet/preview/web-states.gif), and the
+[standalone interactive review](pet/preview/motion-review.html), with slow
+playback and frame stepping. Install the Python dependencies from
+`scripts/requirements.txt` before building.
 The [website preview](website/) has its own timing and state transitions;
 these browser-only enhancements are not transferred into third-party
 Petdex clients.

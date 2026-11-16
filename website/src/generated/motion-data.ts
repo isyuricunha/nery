@@ -1,0 +1,301 @@
+// Generated from pet/nery/motion.json; do not edit manually.
+export const motion = {
+  "version": 4,
+  "cellWidth": 192,
+  "cellHeight": 208,
+  "columns": 16,
+  "floor": 195,
+  "walkDistance": 40,
+  "states": [
+    {
+      "id": "idle",
+      "label": "Idle",
+      "row": 0,
+      "count": 12,
+      "durations": [
+        620,
+        160,
+        150,
+        150,
+        90,
+        90,
+        100,
+        140,
+        170,
+        170,
+        170,
+        330
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 0,
+      "nativeKeys": [
+        0,
+        3,
+        4,
+        5,
+        6,
+        10
+      ]
+    },
+    {
+      "id": "running-right",
+      "label": "Walking right",
+      "row": 1,
+      "count": 16,
+      "durations": [
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 0,
+      "nativeKeys": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14
+      ]
+    },
+    {
+      "id": "running-left",
+      "label": "Walking left",
+      "row": 2,
+      "count": 16,
+      "durations": [
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70,
+        70
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 0,
+      "nativeKeys": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14
+      ]
+    },
+    {
+      "id": "waving",
+      "label": "Waving",
+      "row": 3,
+      "count": 12,
+      "durations": [
+        100,
+        80,
+        80,
+        80,
+        110,
+        110,
+        110,
+        110,
+        110,
+        80,
+        80,
+        160
+      ],
+      "loop": false,
+      "returnToIdle": true,
+      "staticFrame": 4,
+      "nativeKeys": [
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "jumping",
+      "label": "Jumping",
+      "row": 4,
+      "count": 12,
+      "durations": [
+        110,
+        80,
+        90,
+        60,
+        70,
+        100,
+        70,
+        60,
+        60,
+        90,
+        100,
+        160
+      ],
+      "loop": false,
+      "returnToIdle": true,
+      "staticFrame": 0,
+      "nativeKeys": [
+        2,
+        4,
+        5,
+        6,
+        11
+      ]
+    },
+    {
+      "id": "failed",
+      "label": "Failed",
+      "row": 5,
+      "count": 12,
+      "durations": [
+        150,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        120,
+        140,
+        160,
+        500
+      ],
+      "loop": false,
+      "returnToIdle": false,
+      "staticFrame": 11,
+      "nativeKeys": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        11
+      ]
+    },
+    {
+      "id": "waiting",
+      "label": "Waiting for input",
+      "row": 6,
+      "count": 12,
+      "durations": [
+        350,
+        120,
+        120,
+        140,
+        160,
+        180,
+        260,
+        180,
+        160,
+        140,
+        120,
+        350
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 5,
+      "nativeKeys": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ]
+    },
+    {
+      "id": "running",
+      "label": "Working",
+      "row": 7,
+      "count": 12,
+      "durations": [
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 0,
+      "nativeKeys": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ]
+    },
+    {
+      "id": "review",
+      "label": "Reviewing",
+      "row": 8,
+      "count": 12,
+      "durations": [
+        160,
+        140,
+        140,
+        120,
+        100,
+        100,
+        100,
+        120,
+        140,
+        140,
+        160,
+        200
+      ],
+      "loop": true,
+      "returnToIdle": false,
+      "staticFrame": 0,
+      "nativeKeys": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10
+      ]
+    }
+  ]
+} as const;

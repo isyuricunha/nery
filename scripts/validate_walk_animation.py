@@ -10,9 +10,9 @@ from pathlib import Path
 import sys
 import numpy as np
 from PIL import Image, ImageOps
+from motion_assets import normalized
 
 ROOT=Path(__file__).resolve().parents[1]
-SRC=ROOT/"pet/frames-generated/semantic-v3/walk"
 NATIVE=ROOT/"pet/nery/spritesheet.png"
 SMOOTH=ROOT/"pet/nery/walk-16.webp"
 W,H=192,208
@@ -50,13 +50,21 @@ def main():
     check(native.size==(1536,2288),f"native atlas dimensions {native.size}")
     left=frames_of_atlas(smooth,2,16)
     right=frames_of_atlas(smooth,0,16)
-    base_upper=np.asarray(left[0])[:133]
+    sources=normalized('walk')
     silhouettes=[]
     for i,frame in enumerate(left):
         a=np.asarray(frame,dtype=np.uint8)
         alpha=a[:,:,3]
-        check(visibly_equal(a[:133],base_upper),
-              f"frame {i}: head/face/upper body changed (causes flashing)")
+        # These are newly drawn cels, not a frozen upper-body overlay.
+        # Measure head continuity instead of requiring identical head pixels.
+        previous=np.asarray(left[(i-1)%16])
+        head=alpha[:110]>127
+        prior=previous[:110,:,3]>127
+        head_iou=(head & prior).sum()/max(1,(head | prior).sum())
+        color_error=np.mean(np.abs(a[:110,:,:3].astype(float)*a[:110,:,3:4]/255-
+                                  previous[:110,:,:3].astype(float)*previous[:110,:,3:4]/255))/255
+        check(head_iou>=.88 and color_error<=.055,
+              f"frame {i}: head flicker (IoU={head_iou:.3f}, color error={color_error:.3f})")
         check(int((alpha[189:195]>120).sum())>=70,
               f"frame {i}: no grounded supporting sole")
         check(int((alpha[0,:]>15).sum())==0 and int((alpha[-1,:]>15).sum())==0,
@@ -69,15 +77,15 @@ def main():
                              np.asarray(ImageOps.mirror(frame))),
               f"frame {i}: rightward walk does not mirror the entire sprite")
         silhouettes.append((alpha[134:]>127))
-        source=Image.open(SRC/f"{i:02}.png").convert("RGBA")
+        source=sources[i]
         check(visibly_equal(np.asarray(source),a),
-              f"frame {i}: site atlas differs from approved source image")
+              f"frame {i}: site atlas differs from normalized source cel")
     ious=[]
     for i,mask in enumerate(silhouettes):
         nxt=silhouettes[(i+1)%16]
         score=(mask & nxt).sum()/max(1,(mask | nxt).sum())
         ious.append(score)
-        check(score>=.14,f"frame {i}->{(i+1)%16}: violent leg teleport (IoU={score:.3f})")
+        check(score>=.30,f"frame {i}->{(i+1)%16}: violent leg teleport (IoU={score:.3f})")
     nleft=[
        native.crop((i*W,2*H,(i+1)*W,3*H)) for i in range(8)
     ]
@@ -90,7 +98,10 @@ def main():
         check(visibly_equal(np.asarray(a),
                             np.asarray(ImageOps.mirror(b))),
               f"native frame {i}: directional mismatch")
-    check(ious[-1]>.65,f"walk cycle closure too abrupt: {ious[-1]:.3f}")
+    # A proper loop does not duplicate its contact pose at both endpoints.
+    # Judge the seam against ordinary adjacent steps, including real motion.
+    check(ious[-1]>.35 and ious[-1]>=.6*float(np.median(ious[:-1])),
+          f"walk cycle closure too abrupt: {ious[-1]:.3f}")
     check(len({m.tobytes() for m in silhouettes})>=12,
           "web walk does not have enough unique lower body poses")
     print(f"walk frame continuity: minimum lower-body IoU={min(ious):.3f}, "
@@ -103,7 +114,7 @@ def main():
         print("WEB WALK INVALID:")
         for e in errors:print(" -",e)
         return 1
-    print("WEB WALK VALID: 16 frames each direction, identical faces, "
+    print("WEB WALK VALID: 16 frames each direction, stable head/face, "
           "continuous foot support, no white matte, native/web alignment")
     return 0
 

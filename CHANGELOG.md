@@ -2,6 +2,13 @@
 
 All notable changes to the Nery Mizuki character repository.
 
+## 2026-11-16 — motion v4 (local review)
+
+- Replaced all nine action sequences with consistent cel artwork; rebuilt the walk against a sixteen-pose support/contact guide.
+- Added a full web atlas with 116 cels and shared exposure metadata, while preserving the fixed Petdex v2 layout and native frame counts.
+- Reworked browser playback to use complete greeting/jump actions, grounded page travel, static reduced-motion poses and no opacity blending between drawings.
+- Added an offline interactive animation review, full web previews, timing tests and checks for every web action. The approved static kit is unchanged.
+
 ## 2026-11-14
 
 - Created the canonical `nery` repository (GitHub, GitLab and YuGit mirrors) from the approved Mnerys mascot assets.

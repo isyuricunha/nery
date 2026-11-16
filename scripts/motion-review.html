@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nery · Revisão de movimento</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#181210;color:#f0e9e3;font:15px system-ui;line-height:1.5}main{max-width:1000px;margin:auto;padding:36px 24px}h1{margin:0;font-size:28px}p{color:#b9a195}header{margin-bottom:24px}button,select,input{font:inherit}button,select{background:#2a211d;color:#f0e9e3;border:1px solid #705346;border-radius:7px;padding:8px 14px}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #cc785c;outline-offset:3px}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:20px}.stage{display:flex;justify-content:center;border:1px solid #49372f;border-radius:12px;background:#211915}#focus{width:288px;height:312px;max-width:100%;object-fit:contain}.frames{display:flex;align-items:center;gap:12px;margin-block:18px}.frames input{flex:1;accent-color:#cc785c}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#211915;border:1px solid #49372f;border-radius:10px;padding:12px;text-align:center}.card canvas{width:144px;height:156px;max-width:100%;object-fit:contain}.card p{margin:0;color:#f0e9e3;font-size:13px}#status{min-width:110px;font-variant-numeric:tabular-nums}@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}main{padding:24px 16px}}
+</style>
+<main><header><h1>Nery Mizuki · Movimento</h1><p>Compare os nove estados, reduza a velocidade ou examine cada desenho.</p></header>
+<div class="toolbar"><label>Estado <select id="state"></select></label><button id="play">Pausar</button><button id="replay">Reiniciar</button><label>Velocidade <select id="speed"><option value=".25">0,25×</option><option value=".5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option></select></label></div>
+<div class="stage"><canvas id="focus" width="384" height="416" aria-label="Animação selecionada"></canvas></div>
+<div class="frames"><button id="previous" aria-label="Quadro anterior">←</button><input id="frame" type="range" min="0" max="11" value="0" aria-label="Quadro"><button id="next" aria-label="Próximo quadro">→</button><output id="status"></output></div>
+<div class="grid" id="grid"></div><p>Aceno e salto são ações completas. Aqui elas se repetem com uma pausa para facilitar a comparação. No site, retornam ao repouso.</p></main>
+<script>
+const data=__MANIFEST__;
+const atlas=new Image();
+const state=document.querySelector('#state'),play=document.querySelector('#play'),speed=document.querySelector('#speed'),slider=document.querySelector('#frame'),status=document.querySelector('#status');
+const focus=document.querySelector('#focus'),focusCtx=focus.getContext('2d');
+let time=0,last=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,selected=0,manual=0;
+const cards=data.states.map((item,row)=>{
+  const option=document.createElement('option');option.value=row;option.textContent=item.label;state.append(option);
+  const card=document.createElement('div');card.className='card';const p=document.createElement('p');p.textContent=item.label;
+  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=208;canvas.setAttribute('aria-label',item.label);card.append(p,canvas);document.querySelector('#grid').append(card);return canvas.getContext('2d');
+});
+function frameAt(item,elapsed){const total=item.durations.reduce((a,b)=>a+b,0);let t=elapsed%(total+(item.loop?0:600));for(let i=0;i<item.count;i++){if(t<item.durations[i])return i;t-=item.durations[i]}return item.count-1}
+function draw(ctx,row,frame){ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.drawImage(atlas,frame*192,row*208,192,208,0,0,ctx.canvas.width,ctx.canvas.height)}
+function render(){const item=data.states[selected];const frame=playing?frameAt(item,time):manual;draw(focusCtx,selected,frame);focus.dataset.frame=frame;focus.dataset.state=item.id;slider.max=item.count-1;slider.value=frame;status.textContent=`Quadro ${frame+1} / ${item.count}`;cards.forEach((ctx,row)=>draw(ctx,row,playing?frameAt(data.states[row],time):Math.min(manual,data.states[row].count-1)));play.textContent=playing?'Pausar':'Reproduzir'}
+function pauseAt(frame){playing=false;manual=frame;render()}
+state.onchange=()=>{selected=Number(state.value);time=0;manual=0;render()};
+play.onclick=()=>{if(playing){manual=frameAt(data.states[selected],time);playing=false}else{time=data.states[selected].durations.slice(0,manual).reduce((a,b)=>a+b,0);playing=true}render()};
+document.querySelector('#replay').onclick=()=>{time=0;manual=0;render()};slider.oninput=()=>pauseAt(Number(slider.value));
+document.querySelector('#previous').onclick=()=>pauseAt((Number(slider.value)+data.states[selected].count-1)%data.states[selected].count);
+document.querySelector('#next').onclick=()=>pauseAt((Number(slider.value)+1)%data.states[selected].count);
+function tick(now){if(last&&playing&&!document.hidden)time+=Math.min(50,now-last)*Number(speed.value);last=now;render();requestAnimationFrame(tick)}
+atlas.onload=()=>requestAnimationFrame(tick);atlas.src='__ATLAS_URL__';
+</script></html>

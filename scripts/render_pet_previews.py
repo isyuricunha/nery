@@ -8,9 +8,11 @@ Usage: python3 scripts/render_pet_previews.py
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 from PIL import Image, ImageDraw, ImageFont
 from build_walk_animation import load_motion_frames
+from motion_assets import DURATIONS as WEB_DURATIONS, NAMES, manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 ATLAS = ROOT / "pet/nery/spritesheet.webp"
@@ -102,12 +104,67 @@ def main() -> None:
         OUT / "walk-16.gif",
         save_all=True,
         append_images=web_walk[1:],
-        duration=[60] * len(web_walk),
+        duration=list(WEB_DURATIONS[2]),
         loop=0,
         optimize=False,
         disposal=2,
     )
-    print(f"Rendered {len(STATES)} state GIFs, the 16-frame web walk, state reel and contact sheets into {OUT}")
+    render_web_previews()
+    print(f"Rendered native and web previews into {OUT}")
+
+
+def frame_at(durations: list[int], elapsed: int) -> int:
+    for index, duration in enumerate(durations):
+        if elapsed < duration:
+            return index
+        elapsed -= duration
+    return len(durations) - 1
+
+
+def render_web_previews() -> None:
+    """Preview actual shipped web cels, with exactly the browser exposures."""
+    web = Image.open(ROOT / 'pet/nery/motion.webp').convert('RGBA')
+    data = manifest()
+    sequences = []
+    for state in data['states']:
+        row = state['row']
+        sequence = []
+        for col in range(state['count']):
+            cel = web.crop((col*W,row*H,(col+1)*W,(row+1)*H))
+            bg = Image.new('RGBA',(W,H),BACKGROUND+(255,))
+            bg.alpha_composite(cel)
+            sequence.append(bg.convert('RGB'))
+        sequences.append(sequence)
+        sequence[0].save(OUT/f"web-{state['id']}.gif",save_all=True,
+                         append_images=sequence[1:],duration=state['durations'],
+                         loop=0,optimize=False,disposal=2)
+    sheet = Image.new('RGB',(W*16+165,H*9),BACKGROUND)
+    draw = ImageDraw.Draw(sheet)
+    for row,seq in enumerate(sequences):
+        draw.text((12,row*H+90),NAMES[row],fill=(234,208,180))
+        for col,frame in enumerate(seq):
+            sheet.paste(frame,(165+col*W,row*H))
+    sheet.save(OUT/'web-contact-sheet.jpg',quality=93,subsampling=0)
+    reel = []
+    # Repeat finite actions for inspection only, with a quiet hold at the end.
+    for time in range(0,4800,80):
+        canvas = Image.new('RGB',(W*3,H*3+30*3),BACKGROUND)
+        draw = ImageDraw.Draw(canvas)
+        for row,(seq,state) in enumerate(zip(sequences,data['states'])):
+            total = sum(state['durations'])
+            elapsed = time % (total + (0 if state['loop'] else 600))
+            frame = frame_at(state['durations'],elapsed)
+            x,y = row%3*W,row//3*(H+30)
+            draw.text((x+12,y+8),state['label'],fill=(234,208,180))
+            canvas.paste(seq[frame],(x,y+30))
+        reel.append(canvas)
+    reel[0].save(OUT/'web-states.gif',save_all=True,append_images=reel[1:],
+                 duration=80,loop=0,optimize=False,disposal=2)
+    # Embed both atlas and manifest: this review file also opens offline.
+    import base64
+    atlas_url = 'data:image/webp;base64,'+base64.b64encode((ROOT/'pet/nery/motion.webp').read_bytes()).decode()
+    template = (ROOT/'scripts/motion-review.html').read_text(encoding='utf-8')
+    (OUT/'motion-review.html').write_text(template.replace('__MANIFEST__',json.dumps(data)).replace('__ATLAS_URL__',atlas_url),encoding='utf-8')
 
 
 if __name__ == "__main__":
