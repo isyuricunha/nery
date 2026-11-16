@@ -11,10 +11,10 @@ SOURCE = ROOT / 'pet/frames-generated/motion-v4/source'
 W, H, FLOOR = 192, 208, 195
 NAMES = ('idle', 'running-right', 'running-left', 'waving', 'jumping', 'failed', 'waiting', 'running', 'review')
 FILES = ('idle', 'walk', 'walk', 'waving', 'jumping', 'failed', 'waiting', 'working', 'review')
-NATIVE_KEYS = ((0,3,4,5,6,10), tuple(range(0,16,2)), tuple(range(0,16,2)), (3,4,5,7), (2,4,5,6,11), (0,1,2,3,4,6,8,11), (0,2,4,6,8,10), (0,2,4,6,8,10), (0,2,4,6,8,10))
+NATIVE_KEYS = ((0,3,4,5,6,10), tuple(range(0,32,4)), tuple(range(0,32,4)), (3,4,5,7), (2,4,5,6,11), (0,1,2,3,4,6,8,11), (0,2,4,6,8,10), (0,2,4,6,8,10), (0,2,4,6,8,10))
 DURATIONS = (
     (620,160,150,150,90,90,100,140,170,170,170,330),
-    (70,)*16, (70,)*16,
+    (30,)*32, (30,)*32,
     (100,80,80,80,110,110,110,110,110,80,80,160),
     (110,80,90,60,70,100,70,60,60,90,100,160),
     (150,100,100,100,100,100,100,100,120,140,160,500),
@@ -48,8 +48,8 @@ def isolate_character(cel: Image.Image) -> Image.Image:
     data[np.array(component)!=128] = 0
     return Image.fromarray(data)
 
-def source_cells(name: str) -> list[Image.Image]:
-    sheet = Image.open(SOURCE / f'{name}.png').convert('RGBA')
+def source_cells(name: str, source_dir: Path|None=None) -> list[Image.Image]:
+    sheet = Image.open((source_dir or SOURCE) / f'{name}.png').convert('RGBA')
     rows = 4 if name == 'walk' else 3
     cells = []
     for i in range(rows*4):
@@ -62,8 +62,8 @@ def source_cells(name: str) -> list[Image.Image]:
         cells.append(isolate_character(clean) if name == 'failed' else clean)
     return cells
 
-def normalized(name: str) -> list[Image.Image]:
-    cells = source_cells(name)
+def normalized_sheet(name: str, source_dir: Path|None=None) -> list[Image.Image]:
+    cells = source_cells(name,source_dir)
     boxes = [bounds(cel) for cel in cells]
     heights = [b[3]-b[1] for b in boxes]
     reference = median((heights[0],heights[-1])) if name == 'jumping' else median(heights)
@@ -98,32 +98,42 @@ def normalized(name: str) -> list[Image.Image]:
         result.append(frame)
     return result
 
+def normalized(name: str) -> list[Image.Image]:
+    if name == 'walk':
+        from walk_motion import frames
+        return list(frames())
+    return normalized_sheet(name)
+
 def animations() -> list[list[Image.Image]]:
     sources = {name:normalized(name) for name in dict.fromkeys(FILES)}
     return [[ImageOps.mirror(f) for f in sources[name]] if row==1 else sources[name] for row,name in enumerate(FILES)]
 
 def manifest() -> dict:
-    return {'version':4,'cellWidth':W,'cellHeight':H,'columns':16,'floor':FLOOR,'walkDistance':40,
+    return {'version':5,'cellWidth':W,'cellHeight':H,'columns':32,'floor':FLOOR,'walkDistance':30,
             'states':[dict(id=name,label=LABELS[row],row=row,count=len(DURATIONS[row]),durations=list(DURATIONS[row]),loop=LOOPS[row],returnToIdle=row in (3,4),staticFrame=STATIC_FRAMES[row],nativeKeys=list(NATIVE_KEYS[row])) for row,name in enumerate(NAMES)]}
 
 def build(out: Path) -> None:
     out.mkdir(parents=True,exist_ok=True)
     sequences = animations()
     native = Image.new('RGBA',(W*8,H*11))
-    web = Image.new('RGBA',(W*16,H*9))
+    web = Image.new('RGBA',(W*32,H*9))
     walk = Image.new('RGBA',(W*8,H*4))
+    full_walk = Image.new('RGBA',(W*8,H*8))
     for row,seq in enumerate(sequences):
         for col,frame in enumerate(seq):
             web.alpha_composite(frame,(col*W,row*H))
         for col,index in enumerate(NATIVE_KEYS[row]):
             native.alpha_composite(seq[index],(col*W,row*H))
     for base_row,seq in ((0,sequences[1]),(2,sequences[2])):
-        for i,frame in enumerate(seq):
+        for i,frame in enumerate(seq[::2]):
             walk.alpha_composite(frame,((i%8)*W,(base_row+i//8)*H))
-    for name,atlas in (('spritesheet',native),('motion',web),('walk-16',walk)):
+    for base_row,seq in ((0,sequences[1]),(4,sequences[2])):
+        for i,frame in enumerate(seq):
+            full_walk.alpha_composite(frame,((i%8)*W,(base_row+i//8)*H))
+    for name,atlas in (('spritesheet',native),('motion',web),('walk-16',walk),('walk-32',full_walk)):
         atlas.save(out/f'{name}.webp','WEBP',lossless=True,method=6)
         if name=='spritesheet':
             atlas.save(out/f'{name}.png','PNG')
     (out/'motion.json').write_text(json.dumps(manifest(),indent=2)+'\n',encoding='utf-8')
     (out/'pet.json').write_text(json.dumps({'id':'nery','displayName':'Nery Mizuki','description':"Nery Mizuki, the official mascot of Mnerys ('Built to be yours'): a curious copper-haired chibi who keeps you company while your agent works.",'spriteVersionNumber':2,'spritesheetPath':'spritesheet.webp'},indent=2)+'\n',encoding='utf-8')
-    print(f'Built v4 artwork: {sum(map(len,sequences))} web cels; compatible Petdex v2 atlas')
+    print(f'Built motion v5: {sum(map(len,sequences))} web frames; compatible Petdex v2 atlas')

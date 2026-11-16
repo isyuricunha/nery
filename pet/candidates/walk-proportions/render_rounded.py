@@ -8,9 +8,8 @@ sys.path.insert(0,str(HERE.parents[2]/'scripts'))
 import motion_assets
 
 if __name__=='__main__':
-    motion_assets.SOURCE=HERE/'rounded'
     frames=[]
-    for cel in motion_assets.normalized('walk'):
+    for cel in motion_assets.normalized_sheet('walk',HERE/'rounded'):
         bg=Image.new('RGBA',cel.size,(33,25,21,255))
         bg.alpha_composite(cel)
         frames.append(bg.convert('RGB'))

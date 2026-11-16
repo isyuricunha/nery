@@ -1,6 +1,9 @@
-# Walking proportion candidates — awaiting visual selection
+# Walking proportion references
 
-These are review assets, **not inputs to the live pet build**.
+These are historical review assets, **not inputs to the live pet build**.
+The rounded A proportion was selected as a reference. The active locomotion
+revision combines that direction with the existing Idle artwork; see
+`pet/frames-generated/motion-v5/` and `pet/preview/walk-review.html`.
 
 - `rounded.gif`: sixteen fully illustrated cels, emphasizing the original
   fuller chibi proportions. Its gait still needs refinement after proportion
@@ -12,8 +15,8 @@ These are review assets, **not inputs to the live pet build**.
 - `comparison.html`: the actual GIFs at normal speed beside the previous walk.
 - `rounded/walk.png`, `rig/`, `positions-guide.png` and `prompts.json`: sources.
 
-The current runtime remains at the independently committed failure-alignment
-fix. Preserve the chosen body proportions before further gait changes.
+`previous.gif` preserves the runtime before locomotion revision v5. Failure
+alignment remains independently saved at milestone `2c0aeff`.
 
 Rebuild from the repository root:
 

@@ -21,13 +21,13 @@ def main():
     data=json.loads((PACK/'motion.json').read_text())
     atlas=Image.open(PACK/'motion.webp').convert('RGBA')
     native=Image.open(PACK/'spritesheet.png').convert('RGBA')
-    assert atlas.size==(3072,1872), 'wrong web atlas geometry'
+    assert atlas.size==(data['columns']*192,1872), 'wrong web atlas geometry'
     assert len(data['states'])==9
     all_frames=[]
     for row,state in enumerate(data['states']):
         count=state['count']
         assert len(state['durations'])==count
-        assert all(40<=d<=1000 for d in state['durations']), 'invalid exposure'
+        assert all(20<=d<=1000 for d in state['durations']), 'invalid exposure'
         frames=[np.array(atlas.crop((i*192,row*208,(i+1)*192,(row+1)*208))) for i in range(count)]
         tops=[]; feet=[]; centers=[]
         for i,f in enumerate(frames):
@@ -51,7 +51,7 @@ def main():
         for i,key in enumerate(state['nativeKeys']):
             sample=np.array(native.crop((i*192,row*208,(i+1)*192,(row+1)*208)))
             assert visibly_equal(sample,frames[key]), f'{state["id"]}: native sample differs'
-        unused=np.array(atlas.crop((count*192,row*208,16*192,(row+1)*208)))
+        unused=np.array(atlas.crop((count*192,row*208,data['columns']*192,(row+1)*208)))
         assert not np.any(unused[:,:,3]), f'{state["id"]}: stray unused cells'
         assert len({f.tobytes() for f in frames})==count, f'{state["id"]}: duplicate cels'
         all_frames.append(frames)

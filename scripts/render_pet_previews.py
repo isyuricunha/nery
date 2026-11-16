@@ -26,8 +26,8 @@ BACKGROUND = (33, 25, 21)
 COUNTS = (6,8,8,4,5,8,6,6,6)
 DURATIONS = (
     (280,110,110,140,140,320),
-    (120,120,120,120,120,120,120,220),
-    (120,120,120,120,120,120,120,220),
+    (120,)*8,
+    (120,)*8,
     (140,140,140,280),
     (140,140,140,140,280),
     (140,140,140,140,140,140,140,240),
@@ -104,7 +104,7 @@ def main() -> None:
         OUT / "walk-16.gif",
         save_all=True,
         append_images=web_walk[1:],
-        duration=list(WEB_DURATIONS[2]),
+        duration=[sum(WEB_DURATIONS[2][i:i+2]) for i in range(0,32,2)],
         loop=0,
         optimize=False,
         disposal=2,
@@ -138,13 +138,15 @@ def render_web_previews() -> None:
         sequence[0].save(OUT/f"web-{state['id']}.gif",save_all=True,
                          append_images=sequence[1:],duration=state['durations'],
                          loop=0,optimize=False,disposal=2)
-    sheet = Image.new('RGB',(W*16+165,H*9),BACKGROUND)
+    sheet = Image.new('RGB',(W*data['columns']+165,H*9),BACKGROUND)
     draw = ImageDraw.Draw(sheet)
     for row,seq in enumerate(sequences):
         draw.text((12,row*H+90),NAMES[row],fill=(234,208,180))
         for col,frame in enumerate(seq):
             sheet.paste(frame,(165+col*W,row*H))
     sheet.save(OUT/'web-contact-sheet.jpg',quality=93,subsampling=0)
+    sequences[2][0].save(OUT/'walk-32.gif',save_all=True,append_images=sequences[2][1:],
+                         duration=data['states'][2]['durations'],loop=0,optimize=False,disposal=1)
     reel = []
     # Repeat finite actions for inspection only, with a quiet hold at the end.
     for time in range(0,4800,80):
@@ -165,6 +167,8 @@ def render_web_previews() -> None:
     atlas_url = 'data:image/webp;base64,'+base64.b64encode((ROOT/'pet/nery/motion.webp').read_bytes()).decode()
     template = (ROOT/'scripts/motion-review.html').read_text(encoding='utf-8')
     (OUT/'motion-review.html').write_text(template.replace('__MANIFEST__',json.dumps(data)).replace('__ATLAS_URL__',atlas_url),encoding='utf-8')
+    from render_walk_review import render_review
+    render_review()
 
 
 if __name__ == "__main__":

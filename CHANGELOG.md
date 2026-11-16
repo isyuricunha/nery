@@ -2,6 +2,13 @@
 
 All notable changes to the Nery Mizuki character repository.
 
+## 2026-11-16 — locomotion v5
+
+- Reworked only left/right walking, based on the existing Idle artwork and the selected rounded chibi proportion.
+- Added a 32-frame continuous gait with alternating support, stable leg lengths, smooth toe-off/landing velocity and distance-matched page travel. Native Petdex keeps eight samples per direction; its GIF preview no longer holds the last walking frame longer than the others.
+- Preserved all seven non-walking states, including the separately corrected Failed action. A pixel-hash regression verifies that preservation.
+- Added a real-GIF review beside Idle, Waving and Waiting, plus physical gait tests and reproducible part extraction.
+
 ## 2026-11-16 — motion v4 (local review)
 
 - Follow-up: removed disconnected neighboring artwork from the sixth failure cel before alignment; anchored the stationary reaction by its feet and added a body-translation check.

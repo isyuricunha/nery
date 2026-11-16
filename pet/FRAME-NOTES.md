@@ -1,134 +1,116 @@
-# Nery Mizuki — motion v4
+# Nery Mizuki — locomotion v5
 
-Local artwork revision of 2026-11-16, prepared at the rights holder's request.
-The original approved static kit remains unchanged. This animation revision
-is available for visual review; it has not been published or installed in a
-third-party Petdex client.
+This follow-up changes **only left/right walking**. Idle, greeting, jumping,
+failure, waiting, working and review retain every drawing and exposure from
+milestone `2c0aeff`. The original approved static kit is also unchanged.
 
-## What changed
+## Appearance and sources
 
-All nine action rows now use a new, consistently dressed set of cels. The
-open charcoal hoodie, cream undershirt, shorts, socks and sneakers stay
-consistent through idle, walking, greeting, jumping, failure, waiting,
-typing and review. The working state is a standing laptop pose, at the
-same body scale as the other front-facing actions.
+The existing Idle sprite is the master for body proportions, clothing and
+illustration style. The selected rounded A candidate is a secondary reference.
+The earlier skinny articulated candidate was rejected; it is not a runtime
+input. Locomotion uses the same copper hair, amber eyes, cream bows, short
+torso, charcoal hoodie, shorts, fuller chibi legs and tall dark socks.
 
-The walk was redrawn against a sixteen-pose guide, with alternating support,
-passing and contact positions. Both directions mirror the entire figure.
-There is no leg-only reflection, optical-flow interpolation, opacity blend
-between cels, or frozen upper-body patch. Small drawn hair and head movements
-are retained, with a stable head anchor and grounded soles.
+- Other action sources: `pet/frames-generated/motion-v4/source/`.
+- Walking source artwork and registered parts:
+  `pet/frames-generated/motion-v5/rig/`.
+- Retained Idle/rounded references and original six-part sheet are in that
+  directory. `shin-source.png` corrects the sock height against Idle.
+- Generation briefs and provenance: `motion-v5/provenance.json`.
+- Reproducible extraction: `scripts/prepare_walk_parts.py`.
+- Animation and joint registration: `scripts/walk_motion.py`.
 
-The greeting includes raising the hand, waving and lowering it. The jump
-includes anticipation, takeoff, ascent, apex, descent, landing and recovery.
-Failure gradually lowers the expression and holds the final pose. Waiting
-opens and lowers both palms in a loop. Typing and clipboard checking use
-small hand motions and blinks.
+The walking artwork is rendered from registered illustrated parts. Two-bone
+leg motion preserves segment length and forward knee bending. Rigid piece
+rotations, small torso weight shifts, arm counter-swing and a fixed body scale
+avoid the old unrelated-pose jumps. Overlapping knee interiors use the same
+illustrated skin texture, retaining the outer silhouette without cap rings.
+Premultiplied alpha and supersampling prevent pale edge halos.
 
-Follow-up visual review found a disconnected fragment from a neighboring
-cell in failure cel 6 (index 5). It biased the old head-bound alignment by
-about 33 pixels while still passing the head-width check. Failure extraction
-now isolates the character silhouette and anchors its planted feet. The
-body-translation validator and `test_motion_alignment.py` reject that exact
-sideways-teleport regression. Walking is undergoing a separate motion review.
+## Passada and timing
+
+Each direction has **32 frames at 30 ms**, a 960 ms cycle. The two legs
+alternate support. A planted foot moves linearly against page travel;
+the companion covers 30 screen pixels per cycle at its half-size display.
+Swing motion matches horizontal stance velocity at takeoff and landing.
+Foot lift and angle start/end with zero vertical/angular velocity.
+
+The complete figure is mirrored for the opposite direction. There is no
+leg-only reflection, optical-flow reconstruction or opacity crossfade
+between poses. The native eight-frame walking preview now uses uniform
+120 ms exposures, without an extra hold on its final frame.
 
 ## Formats
 
+All cells are 192 × 208.
+
 | Asset | Geometry | Use |
 | --- | --- | --- |
-| `pet/nery/spritesheet.webp` / `.png` | 1536 × 2288, 8 × 11 cells | Petdex v2 compatibility |
-| `pet/nery/motion.webp` | 3072 × 1872, 16 × 9 cells | Full website action sequences |
-| `pet/nery/motion.json` | Shared exposures, loops, static poses and native sample indices | Website and preview timing |
-| `pet/nery/walk-16.webp` | 1536 × 832, 8 × 4 cells | Standalone walking atlas |
+| `pet/nery/spritesheet.webp` / `.png` | 1536 × 2288; 8 × 11 cells | Petdex v2 |
+| `pet/nery/motion.webp` | 6144 × 1872; 32 × 9 cells | Full web sequences |
+| `pet/nery/motion.json` | Exposure, loops, static poses and native sampling | Shared playback contract |
+| `pet/nery/walk-32.webp` | 1536 × 1664; 8 × 8 cells | Full walking atlas |
+| `pet/nery/walk-16.webp` | 1536 × 832; 8 × 4 cells | Compatibility sample |
 
-Every cell is 192 × 208. Native frame counts remain
-**6 / 8 / 8 / 4 / 5 / 8 / 6 / 6 / 6**. The website has **12 cels per
-non-walking action and 16 per walking direction**, 116 cells in total.
-Native clients cannot display the additional web cels without supporting
-the separate format. Their playback timing is controlled by the client.
-The native four-frame wave uses raised-hand wave keys; the web twelve-frame
-wave additionally includes the arm raising and lowering.
+Native frame counts remain **6 / 8 / 8 / 4 / 5 / 8 / 6 / 6 / 6**.
+The website has 12 frames per non-walking action and 32 per walking direction,
+148 frames total. Native walking takes every fourth full walking frame;
+the compatibility atlas takes every second. Native client timing is owned
+by that client, so browser enhancements are not automatically transferred.
+Optional native cursor-look cells in rows 9–10 remain transparent.
 
-The optional cursor-look cells in native rows 9–10 remain transparent;
-cursor-look tracking is outside this action-animation revision.
+## Preserved Failed correction
 
-## Reproducible sources
+Failure cel 6 (index 5) contained a disconnected neighboring fragment. It
+biased the old alignment by approximately 33 pixels. Extraction isolates the
+character and anchors its planted feet. The failure alignment tests reject
+that exact sideways-teleport regression. Locomotion v5 preserves the corrected
+failure drawings and timing.
 
-- Final cel sheets: `pet/frames-generated/motion-v4/source/`.
-- Walking guide: `source/walk-pose-guide.png` in that directory.
-- Generation briefs: `pet/frames-generated/motion-v4/prompts.json` and
-  `revision-prompts.json`.
-- Slicing, common per-action scale, head anchoring, floor alignment and
-  atlas packing: `scripts/motion_assets.py`.
-- Previous source drawings remain in the earlier `frames-generated/`
-  directories. They are not inputs to the v4 build.
+## Build and validation
 
-The build only slices, uniformly scales and translates complete cels,
-removes almost invisible alpha noise, and mirrors complete figures. Jump
-height offsets are explicit and reproducible. No original static kit
-artwork is overwritten or upscaled for the website's kit gallery.
-
-## Website behavior
-
-The canvas renderer reads a single atlas and the shared exposure manifest.
-It selects a drawn cel, without crossfades or ghost limbs. Page travel and
-walking phase share the same distance counter, including acceleration and
-deceleration. At page edges the walker stops before changing direction.
-
-Wave and jump play once and return to idle after the final recovery frame.
-Failure holds its final expression; the other selected states loop. Clicking
-Nery restarts the full greeting, including on repeated clicks. A greeting
-stops the page walker so a waving pose cannot slide across the floor.
-
-Reduced motion uses representative static poses and stops page travel.
-Hidden tabs stop the animation clock. Asset URLs hash both the cel atlas
-and timing manifest, preventing stale drawing/timing combinations.
-
-## Build and checks
-
-Install the Python dependencies from `scripts/requirements.txt`, then run:
+Install `scripts/requirements.txt`, then run from repository root:
 
 ```bash
+python scripts/prepare_walk_parts.py
 python scripts/build_petpack.py
 python scripts/validate_petpack.py
 python scripts/validate_walk_animation.py
 python scripts/validate_motion.py
 python scripts/test_petpack_regressions.py
 python scripts/test_motion_alignment.py
+python scripts/test_walk_motion.py
+python scripts/test_walk_scope.py
 python scripts/render_pet_previews.py
 cd website
-pnpm install --frozen-lockfile
 pnpm test
 pnpm lint
 pnpm check
 pnpm build
 ```
 
-The validators cover geometry, transparent padding, native/web sample
-agreement, whole-body mirroring, planted sole support, head continuity,
-visible palette, unique drawings and ascending/descending jump order.
-The original eight negative regressions are retained.
+The checks cover geometry, alpha, palette, grounded support, whole-body
+mirroring, native/web sampling, bone lengths, alternating steps and continuous
+takeoff/landing velocity. The world-space stance check rejects foot skating;
+silhouette similarity alone cannot establish correct walking.
 
-The walk's adjacent lower-body silhouette IoU is approximately **0.372
-minimum / 0.584 average**, versus 0.161 / 0.453 in the previous atlas.
-The loop seam is 0.481, with real contact motion rather than a repeated
-endpoint. These are continuity diagnostics, not proof of correct anatomy.
-Head silhouette overlap between adjacent walking cels stays above 0.94.
+`preserved-states.json` stores hashes of every non-walking drawing plus its
+exposures, loops and native sampling from `2c0aeff`. `test_walk_scope.py`
+requires all seven other actions to match that saved state exactly.
 
 ## Visual review
 
-Open `pet/preview/motion-review.html` in a browser. This standalone review
-embeds the shipped web atlas and manifest, works offline, and provides all
-nine states, slow playback, pause, restart and individual frame stepping.
-The website also serves it at `/motion-review.html` after preparing assets.
+`pet/preview/walk-review.html` embeds **actual GIF playback at normal speed**
+beside unchanged Idle, Waving and Waiting references, plus the prior walk
+and both new walking directions. The website serves it at `/walk-review.html`.
 
-- `pet/preview/web-states.gif`: simultaneous overview of all web actions.
-- `pet/preview/web-*.gif`: full web sequences with matching timing.
-- `pet/preview/web-contact-sheet.jpg`: every shipped web cel.
-- Existing per-state filenames and `final-contact-sheet.jpg`: native Petdex
-  sampling, kept distinct from the fuller web animations.
+`pet/preview/motion-review.html` provides all nine states, slower playback,
+pause, restart and frame stepping. It embeds the shipped atlas and manifest
+and works offline. `web-*.gif` files show full web sequences; the original
+per-state GIF filenames show native samples. `walk-32.gif` is the full cycle.
 
-Visual and automated checks do not guarantee subjective perfection. The
-drawings retain small hand-drawn differences; the final visual acceptance
-belongs to the rights holder. No commit, push or production deploy is
-performed by these scripts.
+The gait was reviewed through browser GIF playback and sampled compositor
+frames over multiple cycles, then checked in the live canvas renderer.
+Automated checks do not certify subjective artistic perfection. No native
+third-party client installation or production publication is implied.

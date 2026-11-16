@@ -5,7 +5,7 @@ from PIL import Image, ImageOps
 from motion_assets import ROOT, normalized
 
 def load_motion_frames() -> list[Image.Image]:
-    return normalized('walk')
+    return normalized('walk')[::2]
 
 def native_frames(right: bool) -> list[Image.Image]:
     frames = load_motion_frames()[::2]

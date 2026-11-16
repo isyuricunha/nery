@@ -10,12 +10,15 @@ await mkdir(new URL('src/generated/', root), { recursive: true });
 await copy('../assets/mascot/nery-mizuki-avatar.webp', 'public/nery-mizuki-avatar.webp');
 await copy('../pet/nery/spritesheet.webp', 'public/spritesheet.webp');
 await copy('../pet/nery/walk-16.webp', 'public/walk-16.webp');
+await copy('../pet/nery/walk-32.webp', 'public/walk-32.webp');
 await copy('../pet/preview/walk-16.gif', 'public/walk-16.gif');
+await copy('../pet/preview/walk-32.gif', 'public/walk-32.gif');
 await copy('../pet/preview/web-failed.gif', 'public/failed.gif');
 await copy('../pet/nery/pet.json', 'public/pet.json');
 await copy('../pet/nery/motion.webp', 'public/motion.webp');
 await copy('../pet/nery/motion.json', 'public/motion.json');
 await copy('../pet/preview/motion-review.html', 'public/motion-review.html');
+await copy('../pet/preview/walk-review.html', 'public/walk-review.html');
 await copy('../pet/candidates/walk-proportions/comparison.html', 'public/walk-candidate-review.html');
 
 // Astro/Vite serves files in /public as-is. Hash the sprite CONTENT and

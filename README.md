@@ -77,10 +77,12 @@ Known artwork limitations (native sizes, alpha edges) are documented in [docs/AR
 
 The Petdex v2 pet is in [`pet/nery/`](pet/nery/), with nine animation
 states (6/8/8/4/5/8/6/6/6 native frames) and a companion `pet.json`.
-The web preview uses the full **motion v4** atlas: **12 drawn frames for
-each non-walking action and 16 per walking direction**, with shared timing
+The web preview uses the full **motion v5** atlas: **12 frames for
+each non-walking action and 32 per walking direction**, with shared timing
 in `motion.json` and no opacity blending between poses. A standalone
-walking atlas remains available as `walk-16.webp`.
+walking atlases are available as `walk-32.webp` and the compatibility
+sample `walk-16.webp`. The walking artwork follows the existing Idle style
+and rounded chibi proportions; the other seven action drawings are unchanged.
 The native Petdex renderer uses its fixed eight walking frames. The
 optional 16 cursor-look cells (rows 9–10) are not yet illustrated.
 
@@ -93,6 +95,8 @@ python3 scripts/validate_walk_animation.py
 python3 scripts/validate_motion.py
 python3 scripts/test_petpack_regressions.py
 python3 scripts/test_motion_alignment.py
+python3 scripts/test_walk_motion.py
+python3 scripts/test_walk_scope.py
 python3 scripts/render_pet_previews.py
 ```
 
@@ -101,6 +105,10 @@ the [all-state web preview](pet/preview/web-states.gif), and the
 [standalone interactive review](pet/preview/motion-review.html), with slow
 playback and frame stepping. Install the Python dependencies from
 `scripts/requirements.txt` before building.
+
+The [walking review](pet/preview/walk-review.html) plays actual GIFs beside
+the unchanged Idle, Waving and Waiting references, including both walking
+directions and the prior cycle.
 The [website preview](website/) has its own timing and state transitions;
 these browser-only enhancements are not transferred into third-party
 Petdex clients.

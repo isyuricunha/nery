@@ -50,7 +50,7 @@ def main():
     check(native.size==(1536,2288),f"native atlas dimensions {native.size}")
     left=frames_of_atlas(smooth,2,16)
     right=frames_of_atlas(smooth,0,16)
-    sources=normalized('walk')
+    sources=normalized('walk')[::2]
     silhouettes=[]
     for i,frame in enumerate(left):
         a=np.asarray(frame,dtype=np.uint8)
