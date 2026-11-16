@@ -92,6 +92,7 @@ python3 scripts/validate_petpack.py
 python3 scripts/validate_walk_animation.py
 python3 scripts/validate_motion.py
 python3 scripts/test_petpack_regressions.py
+python3 scripts/test_motion_alignment.py
 python3 scripts/render_pet_previews.py
 ```
 

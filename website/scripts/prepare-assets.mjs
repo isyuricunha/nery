@@ -11,6 +11,7 @@ await copy('../assets/mascot/nery-mizuki-avatar.webp', 'public/nery-mizuki-avata
 await copy('../pet/nery/spritesheet.webp', 'public/spritesheet.webp');
 await copy('../pet/nery/walk-16.webp', 'public/walk-16.webp');
 await copy('../pet/preview/walk-16.gif', 'public/walk-16.gif');
+await copy('../pet/preview/web-failed.gif', 'public/failed.gif');
 await copy('../pet/nery/pet.json', 'public/pet.json');
 await copy('../pet/nery/motion.webp', 'public/motion.webp');
 await copy('../pet/nery/motion.json', 'public/motion.json');

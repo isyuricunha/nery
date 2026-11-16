@@ -9,6 +9,14 @@ from validate_walk_animation import visibly_equal
 ROOT=Path(__file__).resolve().parents[1]
 PACK=ROOT/'pet/nery'
 
+def validate_stationary_reaction(frames):
+    centers=[]
+    for frame in frames:
+        _,xs=np.where(frame[170:197,:,3]>127)
+        assert len(xs), 'failed: feet are missing'
+        centers.append((xs.min()+xs.max())/2)
+    assert max(centers)-min(centers)<=2, f'failed: body shifts sideways ({centers})'
+
 def main():
     data=json.loads((PACK/'motion.json').read_text())
     atlas=Image.open(PACK/'motion.webp').convert('RGBA')
@@ -29,6 +37,8 @@ def main():
             tops.append(y.min());feet.append(y.max())
             hy,hx=np.where(f[:105,:,3]>127)
             centers.append((hx.min()+hx.max())/2)
+        if state['id']=='failed':
+            validate_stationary_reaction(frames)
         if row!=4:
             assert max(feet)-min(feet)<=2, f'{state["id"]}: feet bounce on flat ground'
             assert max(centers)-min(centers)<=6, f'{state["id"]}: head pivot jitter'

@@ -4,6 +4,8 @@ All notable changes to the Nery Mizuki character repository.
 
 ## 2026-11-16 — motion v4 (local review)
 
+- Follow-up: removed disconnected neighboring artwork from the sixth failure cel before alignment; anchored the stationary reaction by its feet and added a body-translation check.
+
 - Replaced all nine action sequences with consistent cel artwork; rebuilt the walk against a sixteen-pose support/contact guide.
 - Added a full web atlas with 116 cels and shared exposure metadata, while preserving the fixed Petdex v2 layout and native frame counts.
 - Reworked browser playback to use complete greeting/jump actions, grounded page travel, static reduced-motion poses and no opacity blending between drawings.

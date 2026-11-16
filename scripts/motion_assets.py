@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from statistics import median
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'pet/frames-generated/motion-v4/source'
@@ -31,6 +31,23 @@ def bounds(im: Image.Image) -> tuple[int,int,int,int]:
         raise ValueError('Empty animation cel')
     return box
 
+def isolate_character(cel: Image.Image) -> Image.Image:
+    """Discard disconnected neighboring-cell artwork before deriving pivots.
+
+    The character's body occupies the cell center. Flood-fill that silhouette,
+    keeping original colors and antialiasing; never infer a pivot from debris.
+    """
+    data = np.array(cel)
+    mask = (data[:,:,3] > 16).astype(np.uint8)*255
+    ys,xs = np.where(mask)
+    if not len(xs):
+        raise ValueError('Empty character cel')
+    closest = np.argmin((xs-cel.width/2)**2 + (ys-cel.height/2)**2)
+    component = Image.fromarray(mask).copy()
+    ImageDraw.floodfill(component,(int(xs[closest]),int(ys[closest])),128)
+    data[np.array(component)!=128] = 0
+    return Image.fromarray(data)
+
 def source_cells(name: str) -> list[Image.Image]:
     sheet = Image.open(SOURCE / f'{name}.png').convert('RGBA')
     rows = 4 if name == 'walk' else 3
@@ -41,7 +58,8 @@ def source_cells(name: str) -> list[Image.Image]:
         data = np.array(cel)
         # Almost invisible alpha=1 generator specks must not affect pivots.
         data[data[:,:,3] <= 16] = 0
-        cells.append(Image.fromarray(data))
+        clean = Image.fromarray(data)
+        cells.append(isolate_character(clean) if name == 'failed' else clean)
     return cells
 
 def normalized(name: str) -> list[Image.Image]:
@@ -62,6 +80,14 @@ def normalized(name: str) -> list[Image.Image]:
         if hb is None:
             raise ValueError(f'{name}/{index}: no head anchor')
         x = round(W/2-(hb[0]+hb[2])/2)
+        if name == 'failed':
+            # A stationary reaction is anchored by its planted feet. Hair
+            # changing silhouette must not translate the entire body.
+            foot = cel.getchannel('A').crop((0,b[3]-26,cel.width,b[3]))
+            foot_box = foot.point(lambda a:255 if a>=128 else 0).getbbox()
+            if foot_box is None:
+                raise ValueError(f'failed/{index}: missing foot anchor')
+            x = round(W/2-(foot_box[0]+foot_box[2])/2)
         lift = JUMP_LIFT[index] if name == 'jumping' else 0
         y = FLOOR+1-b[3]+lift
         frame = Image.new('RGBA',(W,H))

@@ -25,6 +25,13 @@ Failure gradually lowers the expression and holds the final pose. Waiting
 opens and lowers both palms in a loop. Typing and clipboard checking use
 small hand motions and blinks.
 
+Follow-up visual review found a disconnected fragment from a neighboring
+cell in failure cel 6 (index 5). It biased the old head-bound alignment by
+about 33 pixels while still passing the head-width check. Failure extraction
+now isolates the character silhouette and anchors its planted feet. The
+body-translation validator and `test_motion_alignment.py` reject that exact
+sideways-teleport regression. Walking is undergoing a separate motion review.
+
 ## Formats
 
 | Asset | Geometry | Use |
@@ -87,6 +94,7 @@ python scripts/validate_petpack.py
 python scripts/validate_walk_animation.py
 python scripts/validate_motion.py
 python scripts/test_petpack_regressions.py
+python scripts/test_motion_alignment.py
 python scripts/render_pet_previews.py
 cd website
 pnpm install --frozen-lockfile
