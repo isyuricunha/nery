@@ -135,5 +135,5 @@ def build(out: Path) -> None:
         if name=='spritesheet':
             atlas.save(out/f'{name}.png','PNG')
     (out/'motion.json').write_text(json.dumps(manifest(),indent=2)+'\n',encoding='utf-8')
-    (out/'pet.json').write_text(json.dumps({'id':'nery','displayName':'Nery Mizuki','description':"Nery Mizuki, the official mascot of Mnerys ('Built to be yours'): a curious copper-haired chibi who keeps you company while your agent works.",'spriteVersionNumber':2,'spritesheetPath':'spritesheet.webp'},indent=2)+'\n',encoding='utf-8')
+    (out/'pet.json').write_text(json.dumps({'id':'nery','displayName':'Nery Mizuki','description':"Nery Mizuki, the official mascot of Mnerys: a curious copper-haired chibi who keeps the Mizukis company while the agent works.",'spriteVersionNumber':2,'spritesheetPath':'spritesheet.webp'},indent=2)+'\n',encoding='utf-8')
     print(f'Built motion v5: {sum(map(len,sequences))} web frames; compatible Petdex v2 atlas')

@@ -8,7 +8,7 @@
   <em>© 2026 Yuri Cunha. All rights reserved. Proprietary mascot asset license (<a href="assets/mascot/LICENSE.md">v1.1</a>).</em>
 </p>
 
-The official character home of **Nery Mizuki**, the mascot of [Mnerys](https://github.com/isyuricunha/mnerys) ("Built to be yours") and of Yuri Cunha's web properties.
+The official character home of **Nery Mizuki**, the mascot of [Mnerys](https://github.com/isyuricunha/mnerys) and of Yuri Cunha's web properties, and a member of the Mizuki family. She is not an adoptable character: only authorized projects may carry her, under the license below.
 
 This repository is the **canonical source of truth** for the character: the approved artwork kit, the identity and usage rules, and the license. Projects that feature Nery copy the assets from a tagged release of this repository and record the kit version they use. She is deliberately **not packaged** (no npm or similar): every project integrates and adapts her artwork for its own surface, and this repository exists so those adaptations never drift from the approved look.
 
@@ -59,10 +59,10 @@ The approved character sheet (1536x1024) carries eight poses, exported with real
 | Character presentation | `transparent/nery-fullbody.png` |
 | Alternative avatar | `avatars/nery-avatar-256.webp` |
 
-## Using Nery in a project
+## Using Nery in an authorized project
 
 1. Download the kit from the latest tagged release of this repository (or the matching `kit-vX` folder on the main branch).
-2. Copy the assets your surface needs and record the kit version in your project (for example `Nery kit v1.0`).
+2. Copy the assets the surface needs and record the kit version in the project (for example `Nery kit v1.0`).
 3. Adapt presentation (placement, sizes, motion) freely; never redraw the character or invent features she does not have. New poses and expressions are produced and approved through this repository.
 4. Respect the identity rules ([docs/IDENTITY.md](docs/IDENTITY.md)) and the license ([assets/mascot/LICENSE.md](assets/mascot/LICENSE.md)).
 
