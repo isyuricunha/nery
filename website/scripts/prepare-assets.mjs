@@ -16,6 +16,7 @@ await copy('../pet/nery/pet.json', 'public/pet.json');
 await copy('../pet/nery/motion.webp', 'public/motion.webp');
 await copy('../pet/nery/motion.json', 'public/motion.json');
 await copy('../pet/preview/motion-review.html', 'public/motion-review.html');
+await copy('../pet/candidates/walk-proportions/comparison.html', 'public/walk-candidate-review.html');
 
 // Astro/Vite serves files in /public as-is. Hash the sprite CONTENT and
 // include it in the URL so a stale cached atlas can never flash old frames.
