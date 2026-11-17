@@ -1,23 +1,50 @@
 ---
-import '../styles/yutheme-kit.css';
-import '../styles/global.css';
-import '../styles/expansion.css';
+import '../styles/site.css';
 import { messages, type Locale } from '../i18n/messages';
-const { locale = 'en' } = Astro.props as { locale?: Locale };
+import { ORIGIN, pageMetadata } from '../scripts/seo';
+const { locale = 'en', notFound = false } = Astro.props as { locale?: Locale; notFound?: boolean };
 const c = messages[locale];
-const title = c.title;
-const description = c.description;
-const language = locale === 'pt-br' ? 'pt-BR' : 'en';
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, ''), Astro.site).href.replace(/\/$/, '');
-const image = new URL('/og.png', Astro.site).href;
-const graph = {'@context':'https://schema.org','@graph':[{'@type':'WebSite','@id':`${canonical}/#website`,url:canonical,name:'Nery Mizuki',description,inLanguage:language},{'@type':'WebPage',url:canonical,name:title,isPartOf:{'@id':`${canonical}/#website`},description},{'@type':'Person',name:'Yuri Cunha',url:'https://yuricunha.com'}]};
+const { title, description, canonical, image, language, graph } = pageMetadata(locale, notFound);
 ---
-<!doctype html><html lang={language} data-theme="yu-amoled"><head>
-<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{title}</title><meta name="description" content={description} /><meta name="robots" content="index,follow,max-image-preview:large" /><meta name="color-scheme" content="dark" /><meta name="referrer" content="strict-origin-when-cross-origin" /><meta name="theme-color" content="#000000" />
-<link rel="canonical" href={canonical} />
-<link rel="alternate" hreflang="en" href={new URL('/', Astro.site).href} />
-<link rel="alternate" hreflang="pt-BR" href={new URL('/pt-br', Astro.site).href} />
-<link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site).href} /><link rel="icon" href="/favicon.svg" type="image/svg+xml" /><link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-<meta property="og:type" content="website" /><meta property="og:site_name" content="Nery Mizuki" /><meta property="og:locale" content={locale === 'pt-br' ? 'pt_BR' : 'en_US'} /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} /><meta property="og:image" content={image} /><meta property="og:image:type" content="image/png" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content={c.socialAlt} />
-<meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} /><meta name="twitter:image" content={image} /><meta name="twitter:image:alt" content={c.socialAlt} /><script type="application/ld+json" set:html={JSON.stringify(graph)} />
-</head><body><a class="skip" href="#main">{c.skip}</a><slot /></body></html>
+<!doctype html>
+<html lang={language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={notFound ? 'noindex,follow' : 'index,follow,max-image-preview:large'} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#100e0d" />
+    <meta name="author" content="Yuri Cunha" />
+    {!notFound && <>
+      <link rel="canonical" href={canonical} />
+      <link rel="alternate" hreflang="en" href={`${ORIGIN}/`} />
+      <link rel="alternate" hreflang="pt-BR" href={`${ORIGIN}/pt-br`} />
+      <link rel="alternate" hreflang="x-default" href={`${ORIGIN}/`} />
+    </>}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nery Mizuki" />
+    <meta property="og:locale" content={locale === 'pt-br' ? 'pt_BR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={locale === 'pt-br' ? 'en_US' : 'pt_BR'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={c.socialAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={c.socialAlt} />
+    {!notFound && <script type="application/ld+json" set:html={JSON.stringify(graph).replace(/</g, '\\u003c')} />}
+  </head>
+  <body><a class="skip" href="#main">{c.skip}</a><slot /></body>
+</html>

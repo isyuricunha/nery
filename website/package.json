@@ -5,7 +5,8 @@
   "type": "module",
   "packageManager": "pnpm@12.18.0",
   "scripts": {
-    "test": "node --test scripts/test-*.mjs",
+    "test": "node --test scripts/test-animation-timing.mjs scripts/test-i18n.mjs",
+    "test:seo": "node --test scripts/test-seo.mjs",
     "predev": "node scripts/prepare-assets.mjs",
     "dev": "astro dev",
     "lint": "node scripts/prepare-assets.mjs && eslint .",
@@ -15,19 +16,20 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "7.4.12",
     "@astrojs/sitemap": "latest",
     "@fontsource-variable/geist": "latest",
+    "astro": "7.4.12",
     "lucide-static": "latest"
   },
   "devDependencies": {
     "@astrojs/check": "latest",
-    "typescript": "6.0.3",
-    "eslint": "latest",
     "@eslint/js": "latest",
+    "eslint": "latest",
     "eslint-plugin-astro": "latest",
     "eslint-plugin-jsx-a11y": "latest",
-    "typescript-eslint": "latest",
-    "globals": "latest"
+    "globals": "latest",
+    "sharp": "0.35.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "latest"
   }
 }

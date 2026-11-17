@@ -4,7 +4,6 @@ import { currentMessages } from '../i18n/messages';
 import { say, positionWalkerSpeech } from './speech';
 const c = currentMessages();
 import { motion } from '../generated/motion-data';
-import { motionAssetVersion } from '../generated/pet-asset-version';
 import { completed, durationOf, frameAt } from './animation-timing';
 
 const preview = document.querySelector<HTMLCanvasElement>('#pet-preview')!;
@@ -13,7 +12,7 @@ const shell = document.querySelector<HTMLElement>('.walker-shell')!;
 const label = document.querySelector<HTMLElement>('#pet-state')!;
 const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-state]')];
 const hits = [...document.querySelectorAll<HTMLButtonElement>('#preview-hit, #walker-hit')];
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+import { reduced, motionEnabled, walkerEnabled } from './preferences';
 const atlas = new Image();
 const states = motion.states;
 const W = motion.cellWidth;
@@ -67,9 +66,10 @@ function paint(layer: typeof layers[number], row: number, elapsed: number, phase
 
 function render(dt = 0): void {
   if (!ready) return;
+  shell.hidden = !walkerEnabled();
   clock += dt;
   const selectedState = states[selected];
-  if (!reduced.matches && selectedState.returnToIdle && completed(selectedState.durations, clock - selectedSince)) {
+  if (motionEnabled() && selectedState.returnToIdle && completed(selectedState.durations, clock - selectedSince)) {
     selected = 0;
     selectedSince = clock;
     markSelection();
@@ -77,7 +77,7 @@ function render(dt = 0): void {
   const waving = clock < waveUntil;
   const turning = clock < turningUntil;
   const resting = performance.now() - lastActivity >= REST_AFTER;
-  const move = !reduced.matches && !resting && !waving && !turning;
+  const move = motionEnabled() && walkerEnabled() && !shell.matches(':hover, :focus-within') && !resting && !waving && !turning;
   const target = move ? direction * SPEED : 0;
   velocity += (target - velocity) * (1 - Math.exp(-dt / 150));
   if (Math.abs(velocity) < 0.15) velocity = 0;
@@ -92,10 +92,10 @@ function render(dt = 0): void {
     turningUntil = clock + TURN_PAUSE;
   }
   // Stop completely for a greeting, never slide a stationary waving pose.
-  if (waving || reduced.matches) velocity = 0;
+  if (waving || !motionEnabled()) velocity = 0;
   shell.style.transform = `translate3d(${x.toFixed(3)}px,0,0)`;
   positionWalkerSpeech(x);
-  const moving = clock >= turningUntil && !waving && !reduced.matches && Math.abs(velocity) > 0.15;
+  const moving = clock >= turningUntil && !waving && motionEnabled() && Math.abs(velocity) > 0.15;
   const walkerRow = waving ? 3 : moving ? (direction > 0 ? 1 : 2) : 0;
   if (walkerRow !== lastWalkerRow) {
     idleSince = clock;
@@ -103,7 +103,7 @@ function render(dt = 0): void {
   }
   paint(layers[0], selected, clock - selectedSince);
   paint(layers[1], walkerRow, clock - idleSince, moving ? distance / WALK_DISTANCE : undefined);
-  const text = c.states[selected] + (reduced.matches ? ` · ${c.staticPose}` : '');
+  const text = c.states[selected] + (!motionEnabled() ? ` · ${reduced.matches ? c.staticPose : c.paused}` : '');
   if (label.textContent !== text) label.textContent = text;
 }
 
@@ -120,7 +120,7 @@ function restart(): void {
   lastTick = 0;
   if (!ready || document.hidden) return;
   render();
-  if (!reduced.matches) raf = requestAnimationFrame(tick);
+  if (motionEnabled()) raf = requestAnimationFrame(tick);
 }
 
 function resize(): void {
@@ -160,17 +160,14 @@ for (const event of ['pointermove', 'pointerdown', 'keydown', 'scroll'] as const
 }
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', restart);
-reduced.addEventListener('change', () => {
-  // A change in preferences must immediately remove any existing movement.
-  velocity = 0;
-  restart();
-});
+document.addEventListener('nery:preferences', () => { velocity = 0; restart(); });
 atlas.addEventListener('load', () => {
   if (atlas.naturalWidth !== W * motion.columns || atlas.naturalHeight !== H * states.length) {
     fail();
     return;
   }
   ready = true;
+  [...buttons, ...hits].forEach(button => { button.disabled = false; });
   resize();
   restart();
 });
@@ -182,4 +179,7 @@ function fail(): void {
   [...buttons, ...hits].forEach(button => { button.disabled = true; });
 }
 atlas.addEventListener('error', fail);
-atlas.src = `/motion.webp?v=${motionAssetVersion}`;
+// Let the portrait finish before fetching the larger animation artwork.
+const loadAtlas = () => { atlas.src = preview.dataset.atlas!; };
+if (document.readyState === 'complete') loadAtlas();
+else window.addEventListener('load', loadAtlas, { once: true });

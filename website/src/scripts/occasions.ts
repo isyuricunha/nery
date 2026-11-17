@@ -9,7 +9,7 @@ const ctx = canvas.getContext('2d');
 const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-occasion]')];
 const hit = document.querySelector<HTMLButtonElement>('#occasion-hit')!;
 const label = document.querySelector<HTMLElement>('#occasion-state')!;
-const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+import { reduced, motionEnabled } from './preferences';
 const atlas = new Image();
 let ready = false;
 let selected = 0;
@@ -27,7 +27,7 @@ function render(): void {
     occasions.cellWidth, occasions.cellHeight, 0, 0, canvas.width, canvas.height);
   canvas.dataset.state = state.id;
   canvas.dataset.frame = String(frame);
-  label.textContent = c.occasionStates[selected] + (reduced.matches ? ` · ${c.staticPose}` : '');
+  label.textContent = c.occasionStates[selected] + (!motionEnabled() ? ` · ${reduced.matches ? c.staticPose : c.paused}` : '');
 }
 
 function tick(now: number): void {
@@ -43,7 +43,7 @@ function restart(): void {
   raf = null;
   lastTick = 0;
   render();
-  if (ready && playing && !reduced.matches && !document.hidden) raf = requestAnimationFrame(tick);
+  if (ready && playing && motionEnabled() && !document.hidden) raf = requestAnimationFrame(tick);
 }
 
 function play(index: number): void {
@@ -66,13 +66,14 @@ buttons.forEach(button => button.addEventListener('click', () => play(Number(but
 hit.addEventListener('click', () => play(selected));
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', restart);
-reduced.addEventListener('change', restart);
+document.addEventListener('nery:preferences', restart);
 atlas.addEventListener('load', () => {
   if (atlas.naturalWidth !== occasions.cellWidth*occasions.columns || atlas.naturalHeight !== occasions.cellHeight*occasions.states.length) {
     fail();
     return;
   }
   ready = true;
+  [...buttons, hit].forEach(button => { button.disabled = false; });
   resize();
   restart();
 });
@@ -84,4 +85,10 @@ function fail(): void {
   [...buttons, hit].forEach(button => { button.disabled = true; });
 }
 atlas.addEventListener('error', fail);
-atlas.src = `/occasions.webp?v=${occasions.assetVersion}`;
+const loader = new IntersectionObserver(entries => {
+  if (entries.some(entry => entry.isIntersecting)) {
+    atlas.src = canvas.dataset.atlas!;
+    loader.disconnect();
+  }
+}, { rootMargin: '500px' });
+loader.observe(canvas);

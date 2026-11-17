@@ -27,6 +27,7 @@ function hide(bubble: HTMLElement): void {
 }
 
 function markToggle(): void {
+  toggle.disabled = false;
   toggle.setAttribute('aria-pressed', String(enabled));
   toggle.textContent = enabled ? c.speechOn : c.speechOff;
   another.disabled = !enabled;
@@ -44,7 +45,9 @@ export function say(topic: Topic, target = 'preview'): void {
   if (target === 'walker') positionWalkerSpeech(walkerShell.getBoundingClientRect().left);
   clearTimeout(timers.get(bubble));
   // Long enough to read, with no typing animation or automatic chatter.
-  timers.set(bubble, setTimeout(() => hide(bubble), 8000));
+  timers.set(bubble, setTimeout(() => {
+    if (!bubble.matches(':focus-within, :hover')) hide(bubble);
+  }, 12000));
 }
 
 toggle.addEventListener('click', () => {
@@ -53,7 +56,7 @@ toggle.addEventListener('click', () => {
   if (!enabled) bubbles.forEach(hide);
   markToggle();
 });
-another.addEventListener('click', () => say('hello'));
+another.addEventListener('click', () => say('hello', 'occasion'));
 bubbles.forEach(bubble => bubble.querySelector('button')!.addEventListener('click', () => {
   // Keep keyboard focus on a visible control when closing the bubble.
   const target = bubble.id === 'walker-speech' ? '#walker-hit' : bubble.id === 'occasion-speech' ? '#occasion-hit' : '#preview-hit';
