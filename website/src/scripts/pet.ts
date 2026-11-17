@@ -1,5 +1,8 @@
 // One shared cel atlas and timing manifest drive both website companions.
 // No opacity dissolves, limb warps or frame interpolation.
+import { currentMessages } from '../i18n/messages';
+import { say } from './speech';
+const c = currentMessages();
 import { motion } from '../generated/motion-data';
 import { motionAssetVersion } from '../generated/pet-asset-version';
 import { completed, durationOf, frameAt } from './animation-timing';
@@ -91,6 +94,9 @@ function render(dt = 0): void {
   // Stop completely for a greeting, never slide a stationary waving pose.
   if (waving || reduced.matches) velocity = 0;
   shell.style.transform = `translate3d(${x.toFixed(3)}px,0,0)`;
+  const shift = Math.min(0, window.innerWidth - 280 - x);
+  shell.style.setProperty('--bubble-shift', `${shift}px`);
+  shell.style.setProperty('--bubble-tail', `${42 - shift}px`);
   const moving = clock >= turningUntil && !waving && !reduced.matches && Math.abs(velocity) > 0.15;
   const walkerRow = waving ? 3 : moving ? (direction > 0 ? 1 : 2) : 0;
   if (walkerRow !== lastWalkerRow) {
@@ -99,7 +105,7 @@ function render(dt = 0): void {
   }
   paint(layers[0], selected, clock - selectedSince);
   paint(layers[1], walkerRow, clock - idleSince, moving ? distance / WALK_DISTANCE : undefined);
-  const text = states[selected].label + (reduced.matches ? ' · static pose' : '');
+  const text = c.states[selected] + (reduced.matches ? ` · ${c.staticPose}` : '');
   if (label.textContent !== text) label.textContent = text;
 }
 
@@ -141,8 +147,16 @@ function select(row: number, greet = false): void {
   activity();
   render();
 }
-buttons.forEach(button => button.addEventListener('click', () => select(Number(button.dataset.state))));
-hits.forEach(hit => hit.addEventListener('click', () => select(3, true)));
+buttons.forEach(button => button.addEventListener('click', () => {
+  const row = Number(button.dataset.state);
+  select(row);
+  const topics = ['idle','hello','hello','hello','jump','failed','waiting','working','review'] as const;
+  say(topics[row]);
+}));
+hits.forEach(hit => hit.addEventListener('click', () => {
+  select(3, true);
+  say('hello', hit.id === 'walker-hit' ? 'walker' : 'preview');
+}));
 for (const event of ['pointermove', 'pointerdown', 'keydown', 'scroll'] as const) {
   window.addEventListener(event, activity, { passive: true });
 }
@@ -165,7 +179,7 @@ atlas.addEventListener('load', () => {
 function fail(): void {
   ready = false;
   restart();
-  label.textContent = 'Nery could not load the animation. See her artwork kit above.';
+  label.textContent = c.loadError;
   shell.hidden = true;
   [...buttons, ...hits].forEach(button => { button.disabled = true; });
 }

@@ -1,0 +1,194 @@
+{
+  "home": "Página inicial da Nery Mizuki",
+  "navigation": "Navegação principal",
+  "identity": "Identidade",
+  "kit": "O kit",
+  "pet": "Nery animada",
+  "usage": "Uso",
+  "repository": "Repositório",
+  "eyebrow": "PEQUENA NO TAMANHO. ENORME NO CARINHO.",
+  "yuri": "A mascote",
+  "mascot": "do Yuri.",
+  "intro": "Feita para Yuri Cunha, seus projetos e seus produtos.",
+  "introEnd": "Cabelos acobreados, muito carinho e um lugar na família Mizuki.",
+  "hello": "Dê um oi para a Nery",
+  "explore": "Conheça o kit",
+  "rights": "Todos os direitos reservados",
+  "portraitAlt": "Nery Mizuki com cabelos acobreados, olhos âmbar e laços creme",
+  "artNote": "EM CASA NOS PROJETOS DO YURI",
+  "characterFile": "FICHA DA PERSONAGEM / 001",
+  "curious": "Curiosa por natureza.",
+  "warm": "Carinhosa em cada detalhe.",
+  "always": "Sempre Nery.",
+  "officialHome": "PÁGINA OFICIAL DA PERSONAGEM ↗",
+  "identityNumber": "01 / IDENTIDADE",
+  "identityTitle": "A mascote do Yuri.",
+  "family": "Parte da família Mizuki.",
+  "identityDescription": "Nery Mizuki é a mascote pessoal de Yuri Cunha, criada para seus projetos, produtos e sites, incluindo o Mnerys. Curiosa e carinhosa, ela dá um rosto familiar às coisas que ele constrói.",
+  "canonical": "A APARÊNCIA ORIGINAL",
+  "copper": "Cobre, carvão",
+  "warmth": "e um pouco de aconchego.",
+  "appearance": "Cabelos acobreados. Olhos âmbar. Laços creme. Moletom em tom carvão com detalhes em terracota e laranja.",
+  "style": "Ilustração 2D no estilo anime/chibi, com tons escuros de carvão e detalhes quentes.",
+  "keepTrue": "PRESERVE A IDENTIDADE",
+  "neverTitle": "O que preservar",
+  "ruleHair": "Preserve as cores dos cabelos e dos olhos.",
+  "rulePurple": "Mantenha os detalhes da personagem na paleta aprovada, sem roxo.",
+  "ruleRobot": "Preserve sua identidade, sem elementos genéricos de robô.",
+  "ruleLogo": "Mantenha o M geométrico como marca nos favicons, PWAs, ícones de aplicativos e logotipos.",
+  "ruleRedraw": "Novos desenhos e estilos precisam seguir a ficha da personagem e ter a aprovação do titular dos direitos.",
+  "ruleLicense": "A arte é proprietária e não pode ser apresentada como open source, AGPL-3.0 ou de uso livre.",
+  "expression": "A EXPRESSÃO CERTA",
+  "feeling": "Um pouco de sentimento",
+  "moments": "para cada momento.",
+  "expressionDescription": "Suas expressões acompanham os momentos dos projetos do Yuri: uma apresentação, uma tarefa concluída, uma pausa para o café. As poses aprovadas ficam reunidas neste repositório.",
+  "expressionGuide": "Guia de expressões",
+  "context": "Contexto",
+  "suggestion": "Expressão sugerida",
+  "kitNumber": "02 / O KIT APROVADO",
+  "kitTitle": "Oito jeitos de ser Nery.",
+  "kitDescription": "As artes aprovadas para os projetos e produtos do Yuri.",
+  "kitDescriptionEnd": "Oito poses, a mesma Nery de sempre.",
+  "kitVersion": "KIT V1.0 / RESOLUÇÃO ORIGINAL",
+  "originalArtwork": "As artes originais, preservadas em sua resolução nativa. A pose de corpo inteiro mede",
+  "petNumber": "03 / NERY EM MOVIMENTO",
+  "petTitle": "Dê um oi. Ela acena.",
+  "petDescription": "Uma prévia de como a Nery acompanha o trabalho do Yuri. Clique nela para dar um oi ou escolha uma animação para vê-la andar, acenar, esperar ou comemorar.",
+  "petPanel": "PAINEL DE ANIMAÇÕES",
+  "stage": "UM MOMENTO COM A NERY",
+  "previewAlt": "Prévia animada da Nery",
+  "canvasFallback": "A prévia da Nery precisa de um navegador com suporte a canvas.",
+  "petControls": "Estados da animação",
+  "stateCount": "9 ESTADOS · CICLOS DESENHADOS",
+  "world": "Um rosto familiar no mundo do Yuri.",
+  "petHint": "Ela também passeia pelo rodapé da página. Depois de um tempo sem interação, ela descansa.",
+  "reduced": "Movimento reduzido? A Nery fica em uma pose estática.",
+  "noScript": "A animação precisa de JavaScript. Você pode conhecer a Nery nas ilustrações acima.",
+  "usageNumber": "04 / USO AUTORIZADO",
+  "usageTitle": "Feita para os projetos",
+  "usageTitleEnd": "e produtos do Yuri.",
+  "usageDescription": "A Nery é a mascote de Yuri Cunha. Este repositório mantém sua arte consistente nos projetos, produtos e sites dele, incluindo o Mnerys. Esta página apresenta sua identidade; o acesso às imagens não autoriza o uso em outros projetos.",
+  "sourceTitle": "Comece pela origem.",
+  "sourceText": "Para integrar aos projetos do Yuri, use as artes aprovadas de uma",
+  "release": "versão identificada",
+  "sourceEnd": "deste repositório.",
+  "versionTitle": "Registre a versão.",
+  "versionText": "Registre a versão do kit em cada projeto do Yuri para manter a consistência das artes.",
+  "surfaceTitle": "Adapte a apresentação.",
+  "surfaceText": "Ajuste a posição, o tamanho e o movimento a cada projeto. Siga as",
+  "identityRules": "regras de identidade",
+  "surfaceEnd": "; preserve as características da personagem.",
+  "artTitle": "Respeite a arte.",
+  "artText": "Não empacote nem redistribua sem permissão expressa por escrito. O uso fora do Mnerys e das propriedades de Yuri Cunha precisa da aprovação do titular dos direitos; consulte a",
+  "license": "licença",
+  "licenseNumber": "05 / DIREITOS E LICENÇA",
+  "artwork": "A arte do Yuri.",
+  "fullLicense": "Leia a licença completa v1.1",
+  "proprietary": "A arte de Nery Mizuki é proprietária.",
+  "licenseText": "A Nery Mizuki Proprietary Mascot Asset License v1.1 permite a instalação e a exibição em uma instância autorizada do Mnerys. O titular dos direitos distribui as artes por este repositório oficial e autoriza seu uso nas propriedades de Yuri Cunha.",
+  "thirdParties": "Terceiros precisam de permissão expressa por escrito para uso independente, redistribuição, empacotamento ou criação de artes derivadas. A entrega das imagens ao navegador não concede direitos de reutilização.",
+  "licenseSeparation": "A arte não é AGPL. A licença do software Mnerys é separada e não se estende às artes da Nery.",
+  "footerMascot": "A mascote de Yuri Cunha.",
+  "walkerHello": "Dê um oi para a Nery passeando pela página",
+  "walkerAlt": "Nery Mizuki, mascote de Yuri Cunha, passeando pela página",
+  "walkerFallback": "Nery Mizuki passeando pela página",
+  "title": "Nery Mizuki — A mascote de Yuri Cunha.",
+  "description": "Nery Mizuki é a mascote pessoal de Yuri Cunha, criada para seus projetos, produtos e sites, incluindo o Mnerys. Conheça sua identidade e suas artes.",
+  "socialAlt": "Nery Mizuki, a mascote de cabelos acobreados de Yuri Cunha.",
+  "skip": "Ir para o conteúdo",
+  "language": "Idioma",
+  "states": [
+    "Em repouso",
+    "Andando à direita",
+    "Andando à esquerda",
+    "Acenando",
+    "Pulando",
+    "Deu errado",
+    "Esperando resposta",
+    "Trabalhando",
+    "Revisando"
+  ],
+  "poses": [
+    "Retrato",
+    "Feliz",
+    "Pensando",
+    "Programando",
+    "Café",
+    "Dormindo",
+    "Com gatinho",
+    "Corpo inteiro"
+  ],
+  "palette": {
+    "Charcoal": "Carvão",
+    "Warm": "Quente",
+    "Terracotta": "Terracota",
+    "Cream": "Creme",
+    "Muted": "Suave"
+  },
+  "expressions": [
+    [
+      "README / apresentação",
+      "Retrato ou feliz"
+    ],
+    [
+      "Instalação e primeiros passos",
+      "Feliz"
+    ],
+    [
+      "Ferramentas de desenvolvimento",
+      "Programando"
+    ],
+    [
+      "Tarefa concluída",
+      "Feliz"
+    ],
+    [
+      "Ajuda ou solução de problemas",
+      "Pensando"
+    ],
+    [
+      "Espera / pausa",
+      "Café ou dormindo"
+    ],
+    [
+      "Estado vazio acolhedor",
+      "Com gatinho"
+    ],
+    [
+      "Apresentação da personagem",
+      "Corpo inteiro"
+    ]
+  ],
+  "staticPose": "pose estática",
+  "loadError": "Não foi possível carregar a animação da Nery. Veja as ilustrações acima.",
+  "dismiss": "Fechar balão de fala",
+  "speechOn": "Falas ativadas",
+  "speechOff": "Falas desativadas",
+  "saySomething": "Outra fala",
+  "speech": {
+    "hello": [
+      "Oi! Eu sou a Nery, a mascote do Yuri.",
+      "Um oizinho da família Mizuki!"
+    ],
+    "idle": [
+      "Uma pausinha. Os projetos do Yuri podem esperar um instante.",
+      "Um momento de sossego, depois voltamos aos projetos do Yuri."
+    ],
+    "working": [
+      "Fazendo companhia pro Yuri enquanto ele cria.",
+      "Um pouquinho de foco, um pouquinho de café."
+    ],
+    "failed": [
+      "Não deu certo. Vamos tentar de novo!"
+    ],
+    "waiting": [
+      "Vou esperar bem aqui."
+    ],
+    "review": [
+      "Mais uma olhadinha antes do Yuri publicar."
+    ],
+    "jump": [
+      "Um pulinho para comemorar!"
+    ]
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "home": "Nery Mizuki home",
+  "navigation": "Main navigation",
+  "identity": "Identity",
+  "kit": "The kit",
+  "pet": "Live pet",
+  "usage": "Usage",
+  "repository": "Repository",
+  "eyebrow": "A LITTLE CHARACTER. A LOT OF HEART.",
+  "yuri": "Yuri’s",
+  "mascot": "mascot.",
+  "intro": "Made for Yuri Cunha, his projects and his products.",
+  "introEnd": "Copper hair, a warm heart, and a place in the Mizuki family.",
+  "hello": "Say hello to Nery",
+  "explore": "Explore the kit",
+  "rights": "All rights reserved",
+  "portraitAlt": "Nery Mizuki with copper-red hair, amber eyes and cream bows",
+  "artNote": "AT HOME IN YURI’S PROJECTS",
+  "characterFile": "CHARACTER FILE / 001",
+  "curious": "Curious by nature.",
+  "warm": "Warm by design.",
+  "always": "Always Nery.",
+  "officialHome": "OFFICIAL CHARACTER HOME ↗",
+  "identityNumber": "01 / IDENTITY",
+  "identityTitle": "Yuri’s mascot.",
+  "family": "Part of the Mizuki family.",
+  "identityDescription": "Nery Mizuki is Yuri Cunha’s personal mascot, created for his projects, products and websites, including Mnerys. Curious and warm, she brings a familiar face to the things he builds.",
+  "canonical": "THE CANONICAL LOOK",
+  "copper": "Copper, charcoal",
+  "warmth": "& a little warmth.",
+  "appearance": "Copper-red hair. Amber eyes. Cream hair bows. A dark charcoal hoodie with warm terracotta and orange accents.",
+  "style": "Friendly 2D anime / chibi illustration, dark charcoal backgrounds and warm highlights.",
+  "keepTrue": "KEEP HER TRUE",
+  "neverTitle": "The never-do list",
+  "ruleHair": "Never change her hair or eye color.",
+  "rulePurple": "Never use purple brand accents on her.",
+  "ruleRobot": "Never apply generic robot motifs.",
+  "ruleLogo": "Never replace the geometric M logo with a mascot icon in a favicon, PWA, app icon or wordmark.",
+  "ruleRedraw": "Never redraw or restyle her outside the approved character sheet without the rights holder’s approval.",
+  "ruleLicense": "Never claim the artwork is open-source, AGPL-3.0 or freely reusable.",
+  "expression": "THE RIGHT EXPRESSION",
+  "feeling": "A little feeling",
+  "moments": "for every moment.",
+  "expressionDescription": "Her expressions accompany moments across Yuri’s projects: an introduction, a finished task, a pause for coffee. Approved poses are kept together in this repository.",
+  "expressionGuide": "Expression guide",
+  "context": "Context",
+  "suggestion": "Suggested expression",
+  "kitNumber": "02 / THE APPROVED KIT",
+  "kitTitle": "Eight ways to be Nery.",
+  "kitDescription": "The approved artwork for Yuri’s projects and products.",
+  "kitDescriptionEnd": "Eight poses, one familiar Nery.",
+  "kitVersion": "KIT V1.0 / NATIVE RESOLUTION",
+  "originalArtwork": "The original artwork, kept at its native resolution. The full-body pose measures",
+  "petNumber": "03 / NERY IN MOTION",
+  "petTitle": "Say hello. She’ll wave.",
+  "petDescription": "A preview of how Nery accompanies Yuri’s work. Click her to say hello, or choose an animation to see her walk, wave, wait or celebrate.",
+  "petPanel": "LIVE PET PANEL",
+  "stage": "A MOMENT WITH NERY",
+  "previewAlt": "Nery’s animated pet preview",
+  "canvasFallback": "Nery’s pet preview requires canvas support.",
+  "petControls": "Pet animation states",
+  "stateCount": "9 STATES · DRAWN ANIMATION CYCLES",
+  "world": "A familiar face in Yuri’s world.",
+  "petHint": "She also walks along the bottom of the page. After a quiet moment, she rests.",
+  "reduced": "Reduced motion? Nery holds a static pose.",
+  "noScript": "The live pet needs JavaScript. Meet Nery in the approved artwork above.",
+  "usageNumber": "04 / AUTHORIZED USE",
+  "usageTitle": "Made for Yuri’s",
+  "usageTitleEnd": "projects and products.",
+  "usageDescription": "Nery is Yuri Cunha’s mascot. This repository keeps her artwork consistent across his projects, products and websites, including Mnerys. Her presence here is a presentation of that identity, not an invitation to adopt her for another project.",
+  "sourceTitle": "Start at the source.",
+  "sourceText": "For integration into Yuri’s projects, use the approved assets from a",
+  "release": "tagged release",
+  "sourceEnd": "of this repository.",
+  "versionTitle": "Keep the version.",
+  "versionText": "Keep the kit version recorded in each of Yuri’s projects so her artwork stays consistent.",
+  "surfaceTitle": "Adapt the surface.",
+  "surfaceText": "Fit her placement, size and motion to each project. Follow the",
+  "identityRules": "identity rules",
+  "surfaceEnd": "; never redraw or invent features.",
+  "artTitle": "Respect the artwork.",
+  "artText": "Never package or redistribute without express written permission. Anything beyond Mnerys and Yuri Cunha’s own properties needs the rights holder’s approval; review the",
+  "license": "license",
+  "licenseNumber": "05 / THE FINE PRINT, CLEARLY",
+  "artwork": "Yuri’s artwork.",
+  "fullLicense": "Read the full license v1.1",
+  "proprietary": "Nery Mizuki is proprietary artwork.",
+  "licenseText": "The Nery Mizuki Proprietary Mascot Asset License v1.1 permits installation and display within an authorized Mnerys instance. The rights holder distributes the artwork through this official repository and authorizes use on Yuri Cunha’s own properties.",
+  "thirdParties": "Third parties need express written permission for independent use, redistribution, packaging or derivative artwork. Browser delivery does not grant reuse rights.",
+  "licenseSeparation": "The art is not AGPL. The Mnerys software license is separate and does not extend to Nery’s artwork.",
+  "footerMascot": "Yuri Cunha’s mascot.",
+  "walkerHello": "Say hello to Nery walking along the page",
+  "walkerAlt": "Nery Mizuki, Yuri Cunha’s mascot, walking along the page",
+  "walkerFallback": "Nery Mizuki walking along the page",
+  "title": "Nery Mizuki — Yuri Cunha’s mascot.",
+  "description": "Nery Mizuki is Yuri Cunha’s personal mascot, created for his projects, products and websites, including Mnerys. Meet her and explore her approved artwork.",
+  "socialAlt": "Nery Mizuki, Yuri Cunha’s copper-haired mascot.",
+  "skip": "Skip to content",
+  "language": "Language",
+  "states": [
+    "Idle",
+    "Walking right",
+    "Walking left",
+    "Waving",
+    "Jumping",
+    "Failed",
+    "Waiting for input",
+    "Working",
+    "Reviewing"
+  ],
+  "poses": [
+    "Portrait",
+    "Happy",
+    "Thinking",
+    "Coding",
+    "Coffee",
+    "Sleeping",
+    "With cat",
+    "Full body"
+  ],
+  "palette": {
+    "Charcoal": "Charcoal",
+    "Warm": "Warm",
+    "Terracotta": "Terracotta",
+    "Cream": "Cream",
+    "Muted": "Muted"
+  },
+  "expressions": [
+    [
+      "README / introduction",
+      "Portrait or happy"
+    ],
+    [
+      "Installation and onboarding",
+      "Happy"
+    ],
+    [
+      "Developer tools",
+      "Coding"
+    ],
+    [
+      "Successful task",
+      "Happy"
+    ],
+    [
+      "Help or troubleshooting",
+      "Thinking"
+    ],
+    [
+      "Waiting / break",
+      "Coffee or sleeping"
+    ],
+    [
+      "Friendly empty state",
+      "With cat"
+    ],
+    [
+      "Character presentation",
+      "Full body"
+    ]
+  ],
+  "staticPose": "static pose",
+  "loadError": "Nery could not load the animation. See her artwork kit above.",
+  "dismiss": "Close speech bubble",
+  "speechOn": "Speech bubbles on",
+  "speechOff": "Speech bubbles off",
+  "saySomething": "Another line",
+  "speech": {
+    "hello": [
+      "Hi! I’m Nery, Yuri’s mascot.",
+      "A little wave from the Mizuki family!"
+    ],
+    "idle": [
+      "Taking a little break. Yuri’s projects can wait a moment.",
+      "A quiet moment, then back to Yuri’s projects."
+    ],
+    "working": [
+      "Keeping Yuri company while he builds.",
+      "A little focus, a little coffee."
+    ],
+    "failed": [
+      "That didn’t work. Time to try again!"
+    ],
+    "waiting": [
+      "I’ll wait right here."
+    ],
+    "review": [
+      "One more look before Yuri ships it."
+    ],
+    "jump": [
+      "A little jump for a little win!"
+    ]
+  }
+}
