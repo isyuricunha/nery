@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@12.18.0",
   "scripts": {
-    "test": "node --test scripts/test-animation-timing.mjs scripts/test-i18n.mjs",
+    "test": "node --test scripts/test-animation-timing.mjs scripts/test-i18n.mjs scripts/test-contrast.mjs",
     "test:seo": "node --test scripts/test-seo.mjs",
     "predev": "node scripts/prepare-assets.mjs",
     "dev": "astro dev",

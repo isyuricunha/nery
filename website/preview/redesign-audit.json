@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-17",
+  "tool": "axe-core 4.14.0",
+  "english": {
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 13
+      }
+    ],
+    "passes": 45,
+    "violations": []
+  },
+  "portuguese320px": {
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "nodes": 13
+      }
+    ],
+    "passes": 45,
+    "violations": []
+  },
+  "dialog": {
+    "passes": 21,
+    "violations": []
+  },
+  "headerStability": {
+    "maximum": 89,
+    "minimum": 89
+  },
+  "pause": {
+    "after": "17",
+    "before": "17",
+    "paused": "off"
+  },
+  "reflow": {
+    "viewport": 320,
+    "textScale": "200%",
+    "textSpacing": "expanded",
+    "pageOverflow": false
+  },
+  "scope": "Local sampled states; not a full manual screen-reader audit"
+}

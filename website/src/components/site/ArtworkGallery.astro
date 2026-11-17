@@ -42,7 +42,7 @@ const sourceFor = (piece: typeof pieces[number]) => originals[`../../../../asset
 <dialog id="artwork-dialog" aria-labelledby="artwork-title" aria-describedby="artwork-description">
   <div class="dialog-top"><span>Nery Mizuki</span><form method="dialog"><button class="icon-button" aria-label={c.closeArtwork}>×</button></form></div>
   <div class="dialog-image"><img id="artwork-large" alt="" /></div>
-  <div class="dialog-caption"><h2 id="artwork-title">{c.galleryTitle}</h2><p id="artwork-description"></p></div>
+  <div class="dialog-caption" aria-live="polite" aria-atomic="true"><h2 id="artwork-title">{c.galleryTitle}</h2><p id="artwork-description"></p></div>
   <div class="dialog-navigation"><button type="button" id="artwork-previous"><span aria-hidden="true">←</span> {c.previousArtwork}</button><button type="button" id="artwork-next">{c.nextArtwork} <span aria-hidden="true">→</span></button></div>
   <p class="dialog-rights">© 2026 Yuri Cunha · {c.rights}</p>
 </dialog>

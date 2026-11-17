@@ -11,7 +11,52 @@ The development server normally uses `http://127.0.0.1:4321`; it reloads local
 changes. This does not update the published site.
 
 `pnpm build` creates `website/dist/`; `pnpm preview --host 127.0.0.1` serves that
-build. Run `pnpm lint`, `pnpm check` and `pnpm test` before committing.
+build. Run `pnpm lint`, `pnpm check` and `pnpm test` before committing, then
+`pnpm build && pnpm test:seo` to check the exported pages and sitemap.
+
+## Interface and accessibility
+
+The redesigned site uses `website/src/styles/site.css` and small Astro components
+under `website/src/components/site/`. It preserves the original character art.
+The navigation, language switch and preferences are available at every screen
+size. Its measured header height sets the anchor offset without determining the
+header's own size, avoiding a ResizeObserver feedback loop.
+
+The gallery progressively enables filters and a native image dialog. Escape closes
+the dialog and restores focus to the illustration; left/right arrows move through
+the current filter. New titles and descriptions are announced politely. With
+JavaScript disabled, all artwork and page text remain available.
+
+Settings can pause every animation, hide the walking Nery, or disable speech.
+Manual pause preserves the selected animation frame. The device's reduced-motion
+preference takes precedence and shows representative still poses. The walking
+character stops moving under pointer hover or keyboard focus.
+
+The target is WCAG 2.2 AA. Color-token checks cover text contrast, control boundaries
+and keyboard focus. These checks complement browser audits and keyboard/reflow
+review; they are not a certification of full conformance or a screen-reader audit.
+
+## Search and image delivery
+
+Both language pages are rendered as complete static HTML. Metadata includes
+self-referencing canonicals, reciprocal language alternatives, localized social
+cards and a connected schema.org graph for the website, page, artwork and Yuri.
+Nery is represented as a fictional creative work rather than a real person.
+The sitemap contains only the two language pages. The 404 and internal animation
+review pages have `noindex,follow`.
+
+Astro generates responsive AVIF/WebP versions of the hero and lightweight WebP
+gallery thumbnails. The dialog loads the native artwork when opened. The web
+atlases use high-quality optimized copies at the original pixel dimensions; the
+approved source atlases remain unchanged. Animation loading yields to the hero,
+and the occasion atlas loads when its stage approaches the viewport.
+
+`website/scripts/build-social.mjs` composes the existing portrait and typography
+into 1200 × 630 English/PT-BR cards. Asset preparation regenerates these cards.
+
+Indexing, search appearance and real-user Core Web Vitals require the published
+site and subsequent observation. No ranking or Lighthouse score is inferred from
+a successful local build.
 
 ## Artwork and animation
 
@@ -25,8 +70,9 @@ Occasion actions play once and settle back into their first drawing. They can
 be replayed with their buttons or by clicking Nery. Reduced motion shows a static
 representative pose. Playback pauses while the page is hidden.
 
-Speech appears in response to interaction, disappears after eight seconds, and
-can be closed or disabled. The speech preference is stored locally when browser
+Speech appears in response to interaction, normally disappears after twelve
+seconds, and remains visible while hovered or focused. It can be closed or
+disabled. The speech preference is stored locally when browser
 storage is available. Speech strings are plain local text; no chat service or
 remote requests are involved.
 
