@@ -3,6 +3,9 @@
 The site has two static language routes: `/` for English and `/pt-br` for
 Brazilian Portuguese. Both use `website/src/components/NerySite.astro` and the
 catalogs in `website/src/i18n/`. The language switch retains the current section.
+On the home route, the site uses the first supported language in the browser's
+preference list and defaults to English. The language switch saves an explicit
+choice locally. A direct visit to `/pt-br` always opens Brazilian Portuguese.
 Page titles, metadata, accessibility labels, animation labels and speech are
 localized. Canonical and alternate-language URLs are rendered at build time.
 

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { runInNewContext } from 'node:vm';
 
 // Check the actual exported HTML so omissions in the template fail the release check.
 for (const [locale, file, language, path] of [
@@ -39,6 +40,31 @@ test('sitemap covers both languages and excludes error and review pages', async 
   assert.match(xml, /hreflang="en"/);
   assert.match(xml, /hreflang="pt-BR"/);
   assert.doesNotMatch(xml, /404|review\.html/);
+});
+test('home chooses the first supported browser language and honors manual choices', async () => {
+  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const script = html.match(/<script id="browser-language">([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script);
+  const origin = 'https://nery.yuricunha.com';
+  function redirect({ languages, saved, path = '/?ref=home#kit', blocked = false }) {
+    let destination;
+    runInNewContext(script, {
+      URL,
+      navigator: { languages, language: 'pt-BR' },
+      localStorage: { getItem() { if (blocked) throw new Error('Storage blocked'); return saved; } },
+      window: { location: { href: origin + path, replace: url => { destination = url; } } },
+    });
+    return destination;
+  }
+  assert.equal(redirect({ languages: ['es', 'pt-PT', 'en'] }), `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: ['en-GB', 'pt-BR'] }), undefined);
+  assert.equal(redirect({ languages: ['de'] }), undefined);
+  assert.equal(redirect({ languages: ['pt-BR'], saved: 'en' }), undefined);
+  assert.equal(redirect({ languages: ['en'], saved: 'pt-br' }), `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: [], blocked: true }), `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: ['pt-BR'], path: '/?lang=en#kit', blocked: true }), undefined);
+  const portuguese = await readFile(new URL('../dist/pt-br/index.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(portuguese, /id="browser-language"/);
 });
 test('error and developer preview pages are explicitly excluded from indexing', async () => {
   for (const file of ['404.html','motion-review.html','walk-review.html','occasions-review.html','walk-candidate-review.html']) {

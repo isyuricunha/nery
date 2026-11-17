@@ -6,7 +6,18 @@ new ResizeObserver(() => {
 }).observe(header);
 
 for (const link of document.querySelectorAll<HTMLAnchorElement>('.language-switch a')) {
-  link.addEventListener('click', () => { link.hash = window.location.hash; });
+  const locale = link.hreflang === 'pt-BR' ? 'pt-br' : 'en';
+  const selectLanguage = () => {
+    link.hash = window.location.hash;
+    try {
+      localStorage.setItem('nery-language', locale);
+    } catch {
+      // Let visitors explicitly open English even if their browser blocks storage.
+      if (locale === 'en') link.search = '?lang=en';
+    }
+  };
+  link.addEventListener('click', selectLanguage);
+  link.addEventListener('auxclick', event => { if (event.button === 1) selectLanguage(); });
 }
 const preferences = document.querySelector<HTMLDetailsElement>('#preferences')!;
 document.addEventListener('keydown', event => {
