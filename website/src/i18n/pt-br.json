@@ -189,6 +189,39 @@
     ],
     "jump": [
       "Um pulinho para comemorar!"
+    ],
+    "celebrate": [
+      "Mais um marco para o Yuri!",
+      "Pronta para comemorar o próximo lançamento do Yuri!"
+    ],
+    "heart": [
+      "Um pouquinho de carinho pro Yuri.",
+      "Com carinho para o cantinho do Yuri na web."
     ]
-  }
+  },
+  "occasionHeading": "Algumas ocasiões especiais.",
+  "occasionDescription": "Um lançamento para comemorar, um pouco de carinho e um aniversário para celebrar. Novas artes para os projetos e páginas pessoais do Yuri.",
+  "occasionNames": [
+    "Comemoração de lançamento",
+    "Um pouco de carinho",
+    "Aniversário"
+  ],
+  "occasionDescriptions": [
+    "Para um projeto novo, uma versão publicada ou um marco concluído.",
+    "Para as páginas pessoais do Yuri e momentos de carinho.",
+    "Para aniversários e comemorações pessoais."
+  ],
+  "occasionVersion": "KIT DE OCASIÕES V2.0 · ARTES ORIGINAIS",
+  "occasionMotionTitle": "Novos momentos em movimento.",
+  "occasionMotionDescription": "Duas novas sequências desenhadas. Escolha uma para reproduzir; clique na Nery para repetir. Cada ação termina em sua pose de repouso.",
+  "occasionStates": [
+    "Comemorar",
+    "Abraçar um coração"
+  ],
+  "occasionAlt": "Animação da Nery para ocasiões especiais",
+  "occasionPlay": "Repetir a animação da Nery",
+  "occasionControls": "Animações para ocasiões",
+  "occasionCount": "2 NOVAS AÇÕES · 12 DESENHOS CADA",
+  "previewGifs": "Ver GIFs das animações",
+  "petFormat": "PRÉVIA DAS ANIMAÇÕES"
 }

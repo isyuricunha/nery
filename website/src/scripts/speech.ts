@@ -9,6 +9,17 @@ let enabled = true;
 try { enabled = localStorage.getItem('nery-speech') !== 'off'; } catch { /* Storage is optional. */ }
 const indices = new Map<string, number>();
 const timers = new Map<HTMLElement, ReturnType<typeof setTimeout>>();
+const walkerBubble = document.querySelector<HTMLElement>('#walker-speech')!;
+const walkerShell = document.querySelector<HTMLElement>('.walker-shell')!;
+
+export function positionWalkerSpeech(x: number): void {
+  if (walkerBubble.hidden) return;
+  const width = walkerBubble.offsetWidth;
+  const left = Math.max(12, Math.min(x, window.innerWidth - width - 12));
+  const shift = left - x;
+  walkerShell.style.setProperty('--bubble-shift', `${shift}px`);
+  walkerShell.style.setProperty('--bubble-tail', `${Math.max(12, Math.min(width-24, 42-shift))}px`);
+}
 
 function hide(bubble: HTMLElement): void {
   clearTimeout(timers.get(bubble));
@@ -30,6 +41,7 @@ export function say(topic: Topic, target = 'preview'): void {
   bubble.querySelector('p')!.textContent = lines[index % lines.length];
   indices.set(topic, index + 1);
   bubble.hidden = false;
+  if (target === 'walker') positionWalkerSpeech(walkerShell.getBoundingClientRect().left);
   clearTimeout(timers.get(bubble));
   // Long enough to read, with no typing animation or automatic chatter.
   timers.set(bubble, setTimeout(() => hide(bubble), 8000));

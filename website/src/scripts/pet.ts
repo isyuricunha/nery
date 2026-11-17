@@ -1,7 +1,7 @@
 // One shared cel atlas and timing manifest drive both website companions.
 // No opacity dissolves, limb warps or frame interpolation.
 import { currentMessages } from '../i18n/messages';
-import { say } from './speech';
+import { say, positionWalkerSpeech } from './speech';
 const c = currentMessages();
 import { motion } from '../generated/motion-data';
 import { motionAssetVersion } from '../generated/pet-asset-version';
@@ -94,9 +94,7 @@ function render(dt = 0): void {
   // Stop completely for a greeting, never slide a stationary waving pose.
   if (waving || reduced.matches) velocity = 0;
   shell.style.transform = `translate3d(${x.toFixed(3)}px,0,0)`;
-  const shift = Math.min(0, window.innerWidth - 280 - x);
-  shell.style.setProperty('--bubble-shift', `${shift}px`);
-  shell.style.setProperty('--bubble-tail', `${42 - shift}px`);
+  positionWalkerSpeech(x);
   const moving = clock >= turningUntil && !waving && !reduced.matches && Math.abs(velocity) > 0.15;
   const walkerRow = waving ? 3 : moving ? (direction > 0 ? 1 : 2) : 0;
   if (walkerRow !== lastWalkerRow) {

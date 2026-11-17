@@ -189,6 +189,39 @@
     ],
     "jump": [
       "A little jump for a little win!"
+    ],
+    "celebrate": [
+      "Another milestone for Yuri!",
+      "Ready to celebrate Yuri’s next launch!"
+    ],
+    "heart": [
+      "A little affection for Yuri.",
+      "Made with care for Yuri’s little corner of the web."
     ]
-  }
+  },
+  "occasionHeading": "A few special occasions.",
+  "occasionDescription": "A launch worth cheering for, a little affection, and a birthday to celebrate. New artwork for Yuri’s projects and personal pages.",
+  "occasionNames": [
+    "Launch celebration",
+    "A little affection",
+    "Birthday"
+  ],
+  "occasionDescriptions": [
+    "For a new project, a release or a finished milestone.",
+    "For Yuri’s personal pages and moments of appreciation.",
+    "For birthdays and personal celebrations."
+  ],
+  "occasionVersion": "OCCASION KIT V2.0 · ORIGINAL ARTWORK",
+  "occasionMotionTitle": "New moments in motion.",
+  "occasionMotionDescription": "Two new drawn sequences. Choose one to play it; click Nery to replay. Each action finishes in its resting pose.",
+  "occasionStates": [
+    "Celebrate",
+    "Hug a heart"
+  ],
+  "occasionAlt": "Nery’s occasion animation",
+  "occasionPlay": "Replay Nery’s occasion animation",
+  "occasionControls": "Occasion animations",
+  "occasionCount": "2 NEW ACTIONS · 12 DRAWINGS EACH",
+  "previewGifs": "View animation GIFs",
+  "petFormat": "ANIMATION PREVIEW"
 }

@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "license": "../LICENSE.md",
+  "poses": [
+    {
+      "id": "celebrate",
+      "file": "nery-celebrate.webp",
+      "width": 177,
+      "height": 324
+    },
+    {
+      "id": "heart",
+      "file": "nery-heart.webp",
+      "width": 178,
+      "height": 310
+    },
+    {
+      "id": "birthday",
+      "file": "nery-birthday.webp",
+      "width": 719,
+      "height": 1450
+    }
+  ]
+}
