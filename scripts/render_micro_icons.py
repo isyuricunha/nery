@@ -42,6 +42,22 @@ def save_or_check(path: Path, content: bytes, check: bool) -> None:
         path.write_bytes(content)
 
 
+def save_png(path: Path, image: Image.Image, check: bool) -> None:
+    if check:
+        if path.is_file():
+            with Image.open(path) as current:
+                if (
+                    current.format == "PNG"
+                    and current.size == image.size
+                    and current.mode == image.mode
+                    and current.tobytes() == image.tobytes()
+                ):
+                    return
+        raise SystemExit(f"Stale or missing PNG: {path.relative_to(ROOT)}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path, format="PNG")
+
+
 def comparison(icons: dict[int, Image.Image], previous: Path) -> Image.Image:
     sheet = Image.new("RGB", (920, 630), "#22272b")
     draw = ImageDraw.Draw(sheet)
@@ -94,15 +110,11 @@ def main() -> None:
             raise SystemExit(f"Unexpected artwork bounds at {size} px")
         if icon.getpixel((0, 0))[3] != 0 or icon.getpixel((size - 1, size - 1))[3] != 0:
             raise SystemExit(f"Expected transparent corners at {size} px")
-        output = BytesIO()
-        icon.save(output, format="PNG")
-        save_or_check(KIT / "png" / f"nery-{size}.png", output.getvalue(), args.check)
+        save_png(KIT / "png" / f"nery-{size}.png", icon, args.check)
         icons[size] = icon
 
     if args.previous:
-        preview = BytesIO()
-        comparison(icons, args.previous).save(preview, format="PNG")
-        save_or_check(KIT / "previews/comparison.png", preview.getvalue(), args.check)
+        save_png(KIT / "previews/comparison.png", comparison(icons, args.previous), args.check)
     print("Rendered and verified Nery icons at 16, 24, 32 and 48 px.")
 
 

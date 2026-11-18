@@ -30,6 +30,9 @@ python scripts/render_micro_icons.py
 python scripts/render_micro_icons.py --check
 ```
 
+The check compares decoded PNG pixels exactly. Compression bytes may vary
+between Windows and Linux.
+
 `nery-16.svg` and `nery-32.svg` are the editable masters. For a new size,
 pick the closest master, add its size to `SIZES` in the renderer, and decide
 which details stay visible at native scale. Regenerate, then compare the
