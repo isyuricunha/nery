@@ -32,20 +32,29 @@ onMount(() => {
         <a href="#identity">{c.identity}</a><a href="#pet">{c.pet}</a><a href="#kit">{c.kit}</a><a href="#usage">{c.usage}</a>
       </nav>
       <div class="header-actions">
-        <nav class="language-switch" aria-label={c.language}>
-          <a href={resolve('/')} lang="en" hreflang="en" aria-current={locale === 'en' ? 'page' : undefined}>EN</a>
-          <a href={resolve('/pt-br')} lang="pt-BR" hreflang="pt-BR" aria-current={locale === 'pt-br' ? 'page' : undefined}>PT-BR</a>
-        </nav>
         <details class="preferences" id="preferences">
-          <summary aria-label={c.settings}><span class="icon" aria-hidden="true"><!-- eslint-disable-next-line svelte/no-at-html-tags -- Trusted Lucide SVG. -->
-            {@html sliders}</span></summary>
+          <summary>
+            <span class="icon" aria-hidden="true"><!-- eslint-disable-next-line svelte/no-at-html-tags -- Trusted Lucide SVG. -->
+              {@html sliders}</span>
+            <span>{c.settings}</span>
+          </summary>
           <div class="preferences-panel">
             <h2>{c.settings}</h2>
+            <nav class="language-settings" aria-labelledby="language-heading" aria-describedby="language-help">
+              <h3 id="language-heading">{c.language}</h3>
+              <p id="language-help">{c.languageHelp}</p>
+              <div class="language-options">
+                <a href={resolve('/?lang=auto')} data-language="auto">{c.languageAuto}</a>
+                <a href={resolve('/?lang=en')} data-language="en" lang="en" hreflang="en" aria-current={locale === 'en' ? 'true' : undefined}>English</a>
+                <a href={resolve('/pt-br')} data-language="pt-br" lang="pt-BR" hreflang="pt-BR" aria-current={locale === 'pt-br' ? 'true' : undefined}>Português (Brasil)</a>
+              </div>
+            </nav>
             <label class="setting-row"><span>{c.motionSetting}</span><input type="checkbox" id="motion-enabled" checked disabled aria-describedby="motion-help" /></label>
             <p id="motion-help">{c.motionHelp}</p>
             <label class="setting-row"><span>{c.walkerSetting}</span><input type="checkbox" id="walker-enabled" checked disabled aria-describedby="walker-help" /></label>
             <p id="walker-help">{c.walkerHelp}</p>
-            <button id="speech-toggle" type="button" aria-pressed="true" disabled>{c.speechOn}</button><p>{c.speechHelp}</p>
+            <label class="setting-row"><span>{c.speechSetting}</span><input type="checkbox" id="speech-toggle" checked disabled aria-describedby="speech-help" /></label>
+            <p id="speech-help">{c.speechHelp}</p>
           </div>
         </details>
       </div>

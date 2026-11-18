@@ -2,13 +2,15 @@ import { currentMessages } from '../i18n/messages';
 
 const c = currentMessages();
 type Topic = keyof typeof c.speech;
-const toggle = document.querySelector<HTMLButtonElement>('#speech-toggle')!;
+type Stage = 'preview' | 'walker' | 'occasion';
+const toggle = document.querySelector<HTMLInputElement>('#speech-toggle')!;
 const another = document.querySelector<HTMLButtonElement>('#speech-another')!;
 const bubbles = [...document.querySelectorAll<HTMLElement>('.speech-bubble')];
 let enabled = true;
 try { enabled = localStorage.getItem('nery-speech') !== 'off'; } catch { /* Storage is optional. */ }
 const indices = new Map<string, number>();
 const timers = new Map<HTMLElement, ReturnType<typeof setTimeout>>();
+const triggers = new WeakMap<HTMLElement, HTMLButtonElement>();
 const walkerBubble = document.querySelector<HTMLElement>('#walker-speech')!;
 const walkerShell = document.querySelector<HTMLElement>('.walker-shell')!;
 
@@ -28,15 +30,15 @@ function hide(bubble: HTMLElement): void {
 
 function markToggle(): void {
   toggle.disabled = false;
-  toggle.setAttribute('aria-pressed', String(enabled));
-  toggle.textContent = enabled ? c.speechOn : c.speechOff;
+  toggle.checked = enabled;
   another.disabled = !enabled;
 }
 
-export function say(topic: Topic, target = 'preview'): void {
+export function say(topic: Topic, target: Stage, trigger: HTMLButtonElement): void {
   if (!enabled || document.hidden) return;
   const bubble = document.querySelector<HTMLElement>(`#${target}-speech`);
   if (!bubble) return;
+  triggers.set(bubble, trigger);
   const lines: string[] = c.speech[topic];
   const index = indices.get(topic) ?? 0;
   bubble.querySelector('p')!.textContent = lines[index % lines.length];
@@ -50,19 +52,24 @@ export function say(topic: Topic, target = 'preview'): void {
   }, 12000));
 }
 
-toggle.addEventListener('click', () => {
-  enabled = !enabled;
+toggle.addEventListener('change', () => {
+  enabled = toggle.checked;
   try { localStorage.setItem('nery-speech', enabled ? 'on' : 'off'); } catch { /* Storage is optional. */ }
   if (!enabled) bubbles.forEach(hide);
   markToggle();
 });
-another.addEventListener('click', () => say('hello', 'occasion'));
-bubbles.forEach(bubble => bubble.querySelector('button')!.addEventListener('click', () => {
-  // Keep keyboard focus on a visible control when closing the bubble.
-  const target = bubble.id === 'walker-speech' ? '#walker-hit' : bubble.id === 'occasion-speech' ? '#occasion-hit' : '#preview-hit';
-  document.querySelector<HTMLButtonElement>(target)?.focus({ preventScroll: true });
+another.addEventListener('click', () => say('hello', 'occasion', another));
+function dismiss(bubble: HTMLElement) {
+  triggers.get(bubble)?.focus({ preventScroll: true });
   hide(bubble);
-}));
+}
+bubbles.forEach(bubble => bubble.querySelector('button')!.addEventListener('click', () => dismiss(bubble)));
 document.addEventListener('visibilitychange', () => { if (document.hidden) bubbles.forEach(hide); });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') bubbles.forEach(hide); });
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  for (const bubble of bubbles) {
+    if (bubble.contains(document.activeElement)) dismiss(bubble);
+    else hide(bubble);
+  }
+});
 markToggle();

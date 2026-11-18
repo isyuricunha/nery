@@ -149,11 +149,11 @@ buttons.forEach(button => button.addEventListener('click', () => {
   const row = Number(button.dataset.state);
   select(row);
   const topics = ['idle','hello','hello','hello','jump','failed','waiting','working','review'] as const;
-  say(topics[row]);
+  say(topics[row], 'preview', button);
 }));
 hits.forEach(hit => hit.addEventListener('click', () => {
   select(3, true);
-  say('hello', hit.id === 'walker-hit' ? 'walker' : 'preview');
+  say('hello', hit.id === 'walker-hit' ? 'walker' : 'preview', hit);
 }));
 for (const event of ['pointermove', 'pointerdown', 'keydown', 'scroll'] as const) {
   window.addEventListener(event, activity, { passive: true });

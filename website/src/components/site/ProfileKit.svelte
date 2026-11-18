@@ -9,7 +9,10 @@
 
 <section id="profile-kit" aria-labelledby="profile-kit-title">
   <header>
-    <h3 id="profile-kit-title">{c.profileKitTitle}</h3>
+    <div>
+      <h3 id="profile-kit-title">{c.profileKitTitle}</h3>
+      <p>{c.profileKitDescription}</p>
+    </div>
     <a class="text-link" href="https://github.com/isyuricunha/nery/tree/main/assets/profile">
       {c.profileKitSource} <span aria-hidden="true">↗</span>
     </a>
@@ -58,6 +61,10 @@
   }
   h3 {
     font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  }
+  header p {
+    max-width: 56ch;
+    margin-top: 8px;
   }
   article, figure {
     min-width: 0;

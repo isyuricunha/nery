@@ -5,30 +5,60 @@ new ResizeObserver(() => {
   document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
 }).observe(header);
 
-for (const link of document.querySelectorAll<HTMLAnchorElement>('.language-switch a')) {
-  const locale = link.hreflang === 'pt-BR' ? 'pt-br' : 'en';
+const options = [...document.querySelectorAll<HTMLAnchorElement>('[data-language]')];
+function markLanguagePreference(preference: string) {
+  for (const link of options) {
+    if (link.dataset.language === preference) link.setAttribute('aria-current', 'true');
+    else link.removeAttribute('aria-current');
+  }
+}
+
+function syncLanguagePreference() {
+  let preference: string | null = null;
+  try { preference = localStorage.getItem('nery-language'); } catch { /* Optional persistence. */ }
+  if (new URLSearchParams(location.search).get('lang') === 'en') preference = 'en';
+  markLanguagePreference(preference === 'en' || preference === 'pt-br' ? preference : 'auto');
+}
+syncLanguagePreference();
+window.addEventListener('pageshow', syncLanguagePreference);
+window.addEventListener('storage', event => {
+  if (event.key === 'nery-language' || event.key === null) syncLanguagePreference();
+});
+
+for (const link of options) {
+  const choice = link.dataset.language!;
   const selectLanguage = () => {
-    link.hash = window.location.hash;
-    try {
-      localStorage.setItem('nery-language', locale);
-    } catch {
-      // Let visitors explicitly open English even if their browser blocks storage.
-      if (locale === 'en') link.search = '?lang=en';
+    const destination = new URL(link.href);
+    destination.search = location.search;
+    destination.searchParams.delete('lang');
+    destination.hash = location.hash;
+    if (choice === 'auto') {
+      destination.searchParams.set('lang', 'auto');
+    } else {
+      try {
+        localStorage.setItem('nery-language', choice);
+      } catch {
+        if (choice === 'en') destination.searchParams.set('lang', 'en');
+      }
+      markLanguagePreference(choice);
     }
+    link.href = destination.href;
   };
   link.addEventListener('click', selectLanguage);
   link.addEventListener('auxclick', event => { if (event.button === 1) selectLanguage(); });
 }
 const preferences = document.querySelector<HTMLDetailsElement>('#preferences')!;
-document.addEventListener('keydown', event => {
+preferences.addEventListener('keydown', event => {
   if (event.key === 'Escape' && preferences.open) {
     preferences.open = false;
     preferences.querySelector('summary')?.focus();
   }
 });
-document.addEventListener('click', event => {
+const closeOutside = (event: Event) => {
   if (event.target instanceof Node && !preferences.contains(event.target)) preferences.open = false;
-});
+};
+document.addEventListener('click', closeOutside);
+document.addEventListener('focusin', closeOutside);
 const links = [...document.querySelectorAll<HTMLAnchorElement>('.main-nav a')];
 const observer = new IntersectionObserver(entries => {
   for (const entry of entries) {

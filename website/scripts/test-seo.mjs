@@ -27,6 +27,13 @@ for (const [locale, file, language, path] of [
     assert.equal(images.size, 42, 'generated responsive images, gallery art, atlases, micro icons and profile media');
     assert.equal((html.match(/data-group="masters"/g) || []).length, 4);
     assert.match(html, /id="profile-kit"/);
+    const preferences = html.match(/<details[^>]+id="preferences"[\s\S]*?<\/details>/)?.[0];
+    assert.ok(preferences);
+    assert.deepEqual(
+      [...preferences.matchAll(/data-language="([^"]+)"/g)].map(match => match[1]),
+      ['auto', 'en', 'pt-br'],
+    );
+    assert.equal((html.match(/data-language="/g) || []).length, 3);
     for (const key of ['avatar', 'friendly', 'banner', 'compact', 'background']) {
       assert.ok(images.has(`profile-${key}.webp`), `Missing profile ${key}`);
     }
@@ -68,21 +75,35 @@ test('home chooses the first supported browser language and honors manual choice
   const origin = 'https://nery.yuricunha.com';
   function redirect({ languages, saved, path = '/?ref=home#kit', blocked = false }) {
     let destination;
+    let removed = false;
     runInNewContext(script, {
       URL,
       navigator: { languages, language: 'pt-BR' },
-      localStorage: { getItem() { if (blocked) throw new Error('Storage blocked'); return saved; } },
+      localStorage: {
+        getItem() { if (blocked) throw new Error('Storage blocked'); return saved; },
+        removeItem(key) {
+          assert.equal(key, 'nery-language');
+          if (blocked) throw new Error('Storage blocked');
+          removed = true;
+        },
+      },
       window: { location: { href: origin + path, replace: url => { destination = url; } } },
     });
-    return destination;
+    return { destination, removed };
   }
-  assert.equal(redirect({ languages: ['es', 'pt-PT', 'en'] }), `${origin}/pt-br?ref=home#kit`);
-  assert.equal(redirect({ languages: ['en-GB', 'pt-BR'] }), undefined);
-  assert.equal(redirect({ languages: ['de'] }), undefined);
-  assert.equal(redirect({ languages: ['pt-BR'], saved: 'en' }), undefined);
-  assert.equal(redirect({ languages: ['en'], saved: 'pt-br' }), `${origin}/pt-br?ref=home#kit`);
-  assert.equal(redirect({ languages: [], blocked: true }), `${origin}/pt-br?ref=home#kit`);
-  assert.equal(redirect({ languages: ['pt-BR'], path: '/?lang=en#kit', blocked: true }), undefined);
+  assert.equal(redirect({ languages: ['es', 'pt-PT', 'en'] }).destination, `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: ['en-GB', 'pt-BR'] }).destination, undefined);
+  assert.equal(redirect({ languages: ['de'] }).destination, undefined);
+  assert.equal(redirect({ languages: ['pt-BR'], saved: 'en' }).destination, undefined);
+  assert.equal(redirect({ languages: ['en'], saved: 'pt-br' }).destination, `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: [], blocked: true }).destination, `${origin}/pt-br?ref=home#kit`);
+  assert.equal(redirect({ languages: ['pt-BR'], path: '/?lang=en#kit', blocked: true }).destination, undefined);
+  assert.deepEqual(redirect({ languages: ['pt-BR'], saved: 'en', path: '/?ref=home&lang=auto#kit' }),
+    { destination: `${origin}/pt-br?ref=home#kit`, removed: true });
+  assert.deepEqual(redirect({ languages: ['en'], saved: 'pt-br', path: '/?lang=auto#pet' }),
+    { destination: `${origin}/#pet`, removed: true });
+  assert.deepEqual(redirect({ languages: ['pt-BR'], blocked: true, path: '/?lang=auto#pet' }),
+    { destination: `${origin}/pt-br#pet`, removed: false });
   const portuguese = await readFile(new URL('../dist/pt-br.html', import.meta.url), 'utf8');
   assert.doesNotMatch(portuguese, /id="browser-language"/);
 });

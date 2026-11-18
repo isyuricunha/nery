@@ -46,12 +46,12 @@ function restart(): void {
   if (ready && playing && motionEnabled() && !document.hidden) raf = requestAnimationFrame(tick);
 }
 
-function play(index: number): void {
+function play(index: number, trigger: HTMLButtonElement): void {
   selected = index;
   elapsed = 0;
   playing = true;
   buttons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.occasion) === selected)));
-  say(selected === 0 ? 'celebrate' : 'heart', 'occasion');
+  say(selected === 0 ? 'celebrate' : 'heart', 'occasion', trigger);
   restart();
 }
 
@@ -62,8 +62,8 @@ function resize(): void {
   render();
 }
 
-buttons.forEach(button => button.addEventListener('click', () => play(Number(button.dataset.occasion))));
-hit.addEventListener('click', () => play(selected));
+buttons.forEach(button => button.addEventListener('click', () => play(Number(button.dataset.occasion), button)));
+hit.addEventListener('click', () => play(selected, hit));
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', restart);
 document.addEventListener('nery:preferences', restart);
