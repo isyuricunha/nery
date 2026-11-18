@@ -59,6 +59,12 @@ The approved character sheet (1536x1024) carries eight poses, exported with real
 | Character presentation | `transparent/nery-fullbody.png` |
 | Alternative avatar | `avatars/nery-avatar-256.webp` |
 
+## Micro icon kit
+
+The [micro icon kit](assets/icons/micro/README.md) provides transparent SVG and
+PNG portraits at 16, 24, 32 and 48 px. YuTheme Dark for OpenClaw consumes the
+16 px variant through the kit's validation and sync command.
+
 ## Using Nery in an authorized project
 
 1. Download the kit from the latest tagged release of this repository (or the matching `kit-vX` folder on the main branch).
