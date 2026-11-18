@@ -255,6 +255,10 @@
   "paused": "paused",
   "galleryTitle": "Many moods. Always Nery.",
   "galleryDescription": "Her everyday expressions and a few special occasions, all together. Take a closer look at a favourite.",
+  "microKitTitle": "Micro icons",
+  "microKitDescription": "Nery in four sizes for compact interfaces. The 16 px icon appears in the YuTheme Dark activity indicator in OpenClaw.",
+  "microKitScale": "Enlarged above, actual size below.",
+  "microKitSource": "View the kit on GitHub",
   "filterLabel": "Filter artwork",
   "filters": [
     "All artwork",

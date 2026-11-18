@@ -24,10 +24,16 @@ for (const [locale, file, language, path] of [
       assert.deepEqual(srcset.split(', ').map(entry => entry.split(' ')[1]), ['320w', '480w', '640w', '745w']);
     }
     const images = new Set([...html.matchAll(/\/generated-art\/([^?\s"]+)\?v=[a-f0-9]{16}/g)].map(match => match[1]));
-    assert.equal(images.size, 25, '4 widths in 3 formats, 11 thumbnails and 2 atlases');
+    assert.equal(images.size, 29, '4 widths in 3 formats, 11 thumbnails, 2 atlases and 4 micro icons');
+    assert.match(html, /id="micro-icons"/);
     for (const file of images) {
       const bytes = await readFile(new URL(`../dist/generated-art/${file}`, import.meta.url));
       assert.ok(bytes.length > 0, `Missing image bytes for ${file}`);
+      const micro = file.match(/^micro-(16|24|32|48)\.png$/);
+      if (micro) {
+        assert.equal(bytes.readUInt32BE(16), Number(micro[1]));
+        assert.equal(bytes.readUInt32BE(20), Number(micro[1]));
+      }
     }
     const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
     assert.equal(graph.filter(node => node['@type']==='WebSite').length, 1);

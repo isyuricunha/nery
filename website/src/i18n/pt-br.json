@@ -255,6 +255,10 @@
   "paused": "em pausa",
   "galleryTitle": "Muitos momentos. Sempre Nery.",
   "galleryDescription": "Suas expressões do dia a dia e algumas ocasiões especiais, todas reunidas. Escolha sua favorita e veja de perto.",
+  "microKitTitle": "Microícones",
+  "microKitDescription": "A Nery em quatro tamanhos para interfaces compactas. O ícone de 16 px aparece no indicador do YuTheme Dark no OpenClaw.",
+  "microKitScale": "Ampliação em cima, tamanho real embaixo.",
+  "microKitSource": "Ver o kit no repositório",
   "filterLabel": "Filtrar ilustrações",
   "filters": [
     "Todas",

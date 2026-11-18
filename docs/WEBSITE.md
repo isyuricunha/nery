@@ -88,6 +88,7 @@ remote requests are involved.
 Useful local review routes:
 
 - `/pt-br#kit`: original and occasion artwork.
+- `/pt-br#micro-icons`: the four canonical micro icons in actual size and enlarged.
 - `/pt-br#pet`: original and new animation panels, with speech controls.
 - `/occasions-review.html`: the two exported GIFs at actual playback timing.
 - `/walk-review.html`: the previously approved walking comparison.

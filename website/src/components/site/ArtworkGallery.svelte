@@ -1,5 +1,6 @@
 <script lang="ts">
 import { galleryImages } from "../../generated/web-art";
+import MicroIconKit from './MicroIconKit.svelte';
 import { artworks } from '../../data/artworks';
 import { messages, type Locale } from '../../i18n/messages';
 import expand from 'lucide-static/icons/expand.svg?raw';
@@ -18,7 +19,10 @@ const pieces = $derived(artworks(locale));
       <div class="filter-group" role="group" aria-label={c.filterLabel} hidden>
         {#each ['all', 'everyday', 'occasions'] as filter, i (filter)}<button type="button" data-filter={filter} aria-pressed={i === 0}>{c.filters[i]}</button>{/each}
       </div>
-      <p id="gallery-result" role="status" aria-live="polite">{c.artworkCount.replace('{count}', String(pieces.length))}</p>
+      <div class="gallery-links">
+        <p id="gallery-result" role="status" aria-live="polite">{c.artworkCount.replace('{count}', String(pieces.length))}</p>
+        <a href="#micro-icons">{c.microKitTitle} <span aria-hidden="true">↓</span></a>
+      </div>
     </div>
     <div class="artwork-grid">
       {#each pieces as piece, i (piece.id)}
@@ -36,6 +40,7 @@ const pieces = $derived(artworks(locale));
         </figure>
       {/each}
     </div>
+    <MicroIconKit {locale} />
     <p class="artwork-notice">{c.artworkRights} <a href="#license">{c.fullLicense} <span aria-hidden="true">↗</span></a></p>
   </div>
 </section>
@@ -46,3 +51,13 @@ const pieces = $derived(artworks(locale));
   <div class="dialog-navigation"><button type="button" id="artwork-previous"><span aria-hidden="true">←</span> {c.previousArtwork}</button><button type="button" id="artwork-next">{c.nextArtwork} <span aria-hidden="true">→</span></button></div>
   <p class="dialog-rights">© 2026 Yuri Cunha · {c.rights}</p>
 </dialog>
+
+<style>
+  .gallery-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-size: .8125rem;
+  }
+</style>
