@@ -1,11 +1,11 @@
 # Nery Mizuki Micro Icon Kit
 
-Version 1.0.0. These square portraits are for compact status indicators and
+Version 1.0.1. These square portraits are for compact status indicators and
 other small UI surfaces in Yuri Cunha's authorized projects.
 
 | Size | Family | Artwork |
 | --- | --- | --- |
-| 16 px | Micro | Hand-tuned face, side bow, copper strands and three solid paths |
+| 16 px | Micro | Round cheeks, open amber eyes, side bow and three solid paths |
 | 24 px | Micro | Copper and skin shading, with the finest details dropped |
 | 32 px | Compact | Copper highlights, ribbon folds, small eye reflections and blush |
 | 48 px | Compact | Compact geometry at its native export size |
@@ -39,10 +39,10 @@ which details stay visible at native scale. Regenerate, then compare the
 native size and enlarged pixels on both dark backgrounds. Include the new
 size in this inventory and the review sheet.
 
-To rebuild the historical comparison, supply the previous YuTheme SVG
-with SHA-256 `04c2ae5b2d02576ae8863091fb3b1515ac043222abcda53e2ce831b122ef959f`.
-It is YuTheme's `backups/nery-before-kit.svg` immediately after the first
-sync. A later sync rolls that backup forward.
+To rebuild the comparison, supply the v1.0.0 export of `nery-16.svg`
+with SHA-256 `b395baa99a18a080cafdf3387e8e8e7cd526480929a42e72caa8956d7491f2ce`.
+It is available in the previous kit revision and in YuTheme's rolling
+backup immediately after updating from v1.0.0.
 
 ```sh
 python scripts/render_micro_icons.py --previous /path/to/previous-nery.svg
