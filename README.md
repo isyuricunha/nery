@@ -65,6 +65,12 @@ The [micro icon kit](assets/icons/micro/README.md) provides transparent SVG and
 PNG portraits at 16, 24, 32 and 48 px. YuTheme Dark for OpenClaw consumes the
 16 px variant through the kit's validation and sync command.
 
+## Master artwork kit
+
+The [master kit](assets/mascot/kit-v3/README.md) includes a neutral full-body
+pose, an expressive bust and two presentation directions in native-resolution
+PNG, WebP and layered OpenRaster.
+
 ## Using Nery in an authorized project
 
 1. Download the kit from the latest tagged release of this repository (or the matching `kit-vX` folder on the main branch).

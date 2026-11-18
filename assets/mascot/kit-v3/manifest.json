@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "version": "3.0.0",
+  "title": "Nery Mizuki Master Kit",
+  "generator": "Built-in image generation",
+  "license": "../LICENSE.md",
+  "poses": [
+    {
+      "id": "master-standing",
+      "title": "Neutral standing",
+      "width": 1024,
+      "height": 1536,
+      "png": "nery-master-standing.png",
+      "webp": "nery-master-standing.webp",
+      "source": {
+        "filename": "exec-8752d3de-f408-4674-b81d-b539afc22b6d.png",
+        "references": [
+          "../kit-v1/transparent/nery-fullbody.png",
+          "../kit-v1/transparent/nery-portrait.png"
+        ],
+        "prompt": "Use case: stylized-concept. Make ONE single polished portrait-oriented master illustration of Yuri's original Nery Mizuki mascot. References are the actual character design to match, in particular the big round chibi head (roughly a third of her standing height), short sturdy legs where visible, copper-red wavy hair with layered swept fringe and crown curl, amber eyes, warm round cheeks, cream ribbons at each side (keep the visible knot and tails attached to their original side), oversized dark charcoal-brown zip hoodie, orange pulls and trim, small warm orange M on the sleeve if visible. Match the anime linework and shaded copper palette closely. Clean hand-drawn illustrative detail without gritty textures. Use genuine transparent RGBA background. Single isolated character, clear silhouette, no cast/glow shadow, fog, backdrop, border, lettering, stickers or props. Keep margin around entire framing. Render at largest practical native portrait resolution.\nInput images and pose: 1: approved front-view full-body design reference; 2: approved portrait reference for face/hair. Draw neutral front three-quarter full-body standing pose head-to-toe, both rounded shoes fully visible, hands relaxed beside hips, tiny friendly closed smile. Match the reference short charcoal pleated shorts, dark socks and chunky brown/orange lace-up shoes. Avoid long or thin legs."
+      }
+    },
+    {
+      "id": "master-bust",
+      "title": "Expressive bust",
+      "width": 1158,
+      "height": 1358,
+      "png": "nery-master-bust.png",
+      "webp": "nery-master-bust.webp",
+      "source": {
+        "filename": "exec-ac1165d3-aef2-4113-920b-7783a0a3272c.png",
+        "references": [
+          "../kit-v1/transparent/nery-portrait.png",
+          "../kit-v1/transparent/nery-fullbody.png"
+        ],
+        "prompt": "Use case: stylized-concept. Make ONE single polished portrait-oriented master illustration of Yuri's original Nery Mizuki mascot. References are the actual character design to match, in particular the big round chibi head (roughly a third of her standing height), short sturdy legs where visible, copper-red wavy hair with layered swept fringe and crown curl, amber eyes, warm round cheeks, cream ribbons at each side (keep the visible knot and tails attached to their original side), oversized dark charcoal-brown zip hoodie, orange pulls and trim, small warm orange M on the sleeve if visible. Match the anime linework and shaded copper palette closely. Clean hand-drawn illustrative detail without gritty textures. Use genuine transparent RGBA background. Single isolated character, clear silhouette, no cast/glow shadow, fog, backdrop, border, lettering, stickers or props. Keep margin around entire framing. Render at largest practical native portrait resolution.\nInput images and pose: 1: approved portrait face/hair reference; 2: approved outfit reference. Draw an original head-to-upper-chest bust, glassy open amber eyes and natural delighted smile, slight head tilt, full visible crown and bow tails, shoulders relaxed. Keep complete hair contour to beyond where it meets upper chest, intentional curved bust termination. No laptop, mug, table or hands at the face."
+      }
+    },
+    {
+      "id": "master-present-left",
+      "title": "Presenting to the left",
+      "width": 1024,
+      "height": 1536,
+      "png": "nery-master-present-left.png",
+      "webp": "nery-master-present-left.webp",
+      "source": {
+        "filename": "exec-df5ab6b9-0e09-4353-bfaa-6f9a7a3cb130.png",
+        "references": [
+          "../kit-v1/transparent/nery-fullbody.png",
+          "../kit-v1/transparent/nery-portrait.png"
+        ],
+        "prompt": "Use case: stylized-concept. Make ONE single polished portrait-oriented master illustration of Yuri's original Nery Mizuki mascot. References are the actual character design to match, in particular the big round chibi head (roughly a third of her standing height), short sturdy legs where visible, copper-red wavy hair with layered swept fringe and crown curl, amber eyes, warm round cheeks, cream ribbons at each side (keep the visible knot and tails attached to their original side), oversized dark charcoal-brown zip hoodie, orange pulls and trim, small warm orange M on the sleeve if visible. Match the anime linework and shaded copper palette closely. Clean hand-drawn illustrative detail without gritty textures. Use genuine transparent RGBA background. Single isolated character, clear silhouette, no cast/glow shadow, fog, backdrop, border, lettering, stickers or props. Keep margin around entire framing. Render at largest practical native portrait resolution.\nInput images and pose: 1: approved front-view full-body design reference; 2: approved portrait for face, shadings and bow placement. Draw original complete standing mascot, body slightly turned toward SCREEN LEFT, face still seen three-quarter, smiling and looking toward her open palm. The arm on the LEFT side of the picture gestures LEFT toward off-canvas headline with naturally drawn hand palm up, other arm bent gently near waist. Both chunky shoes fully visible. Use a naturally asymmetric, welcoming pose. Preserve bow anatomy and actual jacket trim, draw the hands cleanly."
+      }
+    },
+    {
+      "id": "master-present-right",
+      "title": "Presenting to the right",
+      "width": 1024,
+      "height": 1536,
+      "png": "nery-master-present-right.png",
+      "webp": "nery-master-present-right.webp",
+      "source": {
+        "filename": "exec-c6a44ec9-f91b-47ce-8dc5-e19605fecf3f.png",
+        "references": [
+          "../kit-v1/transparent/nery-fullbody.png",
+          "../kit-v1/transparent/nery-portrait.png"
+        ],
+        "prompt": "Use case: stylized-concept. Make ONE single polished portrait-oriented master illustration of Yuri's original Nery Mizuki mascot. References are the actual character design to match, in particular the big round chibi head (roughly a third of her standing height), short sturdy legs where visible, copper-red wavy hair with layered swept fringe and crown curl, amber eyes, warm round cheeks, cream ribbons at each side (keep the visible knot and tails attached to their original side), oversized dark charcoal-brown zip hoodie, orange pulls and trim, small warm orange M on the sleeve if visible. Match the anime linework and shaded copper palette closely. Clean hand-drawn illustrative detail without gritty textures. Use genuine transparent RGBA background. Single isolated character, clear silhouette, no cast/glow shadow, fog, backdrop, border, lettering, stickers or props. Keep margin around entire framing. Render at largest practical native portrait resolution.\nInput images and pose: 1: approved front-view full-body design reference; 2: approved portrait for face, shadings and bow placement. Draw original complete standing mascot, body slightly turned toward SCREEN RIGHT, face still seen three-quarter, smiling and looking toward her open palm. The arm on the RIGHT side of the picture gestures RIGHT toward off-canvas headline with naturally drawn hand palm up, other arm casually holding hoodie seam near waist. Keep both chunky shoes fully visible. Independently redraw the perspective and keep the left/right garment, hair part and bow attachment anatomically consistent, never mirror the character design."
+      }
+    }
+  ]
+}

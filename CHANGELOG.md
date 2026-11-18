@@ -2,6 +2,11 @@
 
 All notable changes to the Nery Mizuki character repository.
 
+## 2026-11-18 — master artwork kit v3.0
+
+- Added original full-body and bust artwork and two presentation directions in native PNG, WebP and editable OpenRaster.
+- Added a high-resolution artwork filter to the website in English and Brazilian Portuguese.
+
 ## 2026-11-16 — locomotion v5
 
 - Reworked only left/right walking, based on the existing Idle artwork and the selected rounded chibi proportion.

@@ -21,7 +21,9 @@ The sheet is larger than its individual figures. Native pose sizes (from the kit
 | Coffee | 225x222 |
 | With cat | 294x198 |
 
-**Do not upscale poses for large banners or print**: the full-body pose at 195 px wide degrades past its native size. Large-format or high-resolution poses require new original artwork, produced and approved through this repository.
+The 195 px-wide full-body pose is best used at its native size. For larger
+layouts, the [master kit](../assets/mascot/kit-v3/README.md) provides three
+full-body poses at 1024 × 1536 px and a bust at 1158 × 1358 px.
 
 ## Known imperfections
 
