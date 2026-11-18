@@ -254,7 +254,7 @@
   "speechHelp": "Short lines appear only when you interact.",
   "paused": "paused",
   "galleryTitle": "Many moods. Always Nery.",
-  "galleryDescription": "Her everyday expressions and a few special occasions, all together. Take a closer look at a favourite.",
+  "galleryDescription": "Everyday expressions, special occasions and high-resolution artwork. Take a closer look at a favourite.",
   "microKitTitle": "Micro icons",
   "microKitDescription": "Nery in four sizes for compact interfaces. The 16 px icon appears in the YuTheme Dark activity indicator in OpenClaw.",
   "microKitScale": "Enlarged above, actual size below.",
@@ -263,8 +263,15 @@
   "filters": [
     "All artwork",
     "Everyday",
-    "Occasions"
+    "Occasions",
+    "High resolution"
   ],
+  "masterArt": {
+    "master-standing": { "title": "Full body", "description": "Nery stands with relaxed arms and a slight smile." },
+    "master-bust": { "title": "Expressive bust", "description": "Nery smiles with a slight head tilt and both ribbons visible." },
+    "master-present-left": { "title": "Presenting to the left", "description": "Nery extends her open palm toward the left side of the image." },
+    "master-present-right": { "title": "Presenting to the right", "description": "Nery extends her open palm toward the right side of the image." }
+  },
   "artworkCount": "{count} illustrations",
   "viewArtwork": "View artwork: {title}",
   "closeArtwork": "Close artwork",

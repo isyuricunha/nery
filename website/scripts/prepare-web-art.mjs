@@ -32,7 +32,7 @@ for (const [format, options] of [['avif', { quality: 55 }], ['webp', { quality: 
 }
 
 const gallery = {};
-for (const kit of ['kit-v1', 'kit-v2']) {
+for (const kit of ['kit-v1', 'kit-v2', 'kit-v3']) {
   const originals = new URL(`${kit}/transparent/`, sources);
   const filenames = (await readdir(originals)).filter(name => /^nery-.+\.png$/.test(name)).sort();
   for (const name of filenames) {
@@ -43,6 +43,13 @@ for (const kit of ['kit-v1', 'kit-v2']) {
     );
   }
 }
+
+const masterKit = new URL('kit-v3/', sources);
+const { poses } = JSON.parse(await readFile(new URL('manifest.json', masterKit), 'utf8'));
+const masterArt = await Promise.all(poses.map(async ({ id, width, height, webp }) => {
+  const bytes = await readFile(new URL(`transparent/${webp}`, masterKit));
+  return { id, width, height, src: await publish(bytes, webp) };
+}));
 
 const atlases = {};
 for (const [key, source] of [['motion', '../pet/nery/motion.webp'], ['occasions', '../pet/occasions/occasions.webp']]) {
@@ -64,5 +71,6 @@ await writeFile(new URL('src/generated/web-art.ts', root), [
   `export const galleryImages: Record<string, { src: string; width: number; height: number }> = ${JSON.stringify(gallery, null, 2)};`,
   `export const animationAtlases = ${JSON.stringify(atlases, null, 2)};`,
   `export const microIcons = ${JSON.stringify(microIcons, null, 2)};`,
+  `export const masterArt = ${JSON.stringify(masterArt, null, 2)} as const;`,
   '',
 ].join('\n'));

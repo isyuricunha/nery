@@ -1,7 +1,7 @@
 <script lang="ts">
 import { galleryImages } from "../../generated/web-art";
 import MicroIconKit from './MicroIconKit.svelte';
-import { artworks } from '../../data/artworks';
+import { artworkFilters, artworks } from '../../data/artworks';
 import { messages, type Locale } from '../../i18n/messages';
 import expand from 'lucide-static/icons/expand.svg?raw';
 const { locale }: { locale: Locale } = $props();
@@ -17,7 +17,7 @@ const pieces = $derived(artworks(locale));
     </div>
     <div class="gallery-toolbar">
       <div class="filter-group" role="group" aria-label={c.filterLabel} hidden>
-        {#each ['all', 'everyday', 'occasions'] as filter, i (filter)}<button type="button" data-filter={filter} aria-pressed={i === 0}>{c.filters[i]}</button>{/each}
+        {#each artworkFilters as filter, i (filter)}<button type="button" data-filter={filter} aria-pressed={i === 0}>{c.filters[i]}</button>{/each}
       </div>
       <div class="gallery-links">
         <p id="gallery-result" role="status" aria-live="polite">{c.artworkCount.replace('{count}', String(pieces.length))}</p>
@@ -36,7 +36,7 @@ const pieces = $derived(artworks(locale));
             <span class="expand-icon icon" aria-hidden="true"><!-- eslint-disable-next-line svelte/no-at-html-tags -- Trusted Lucide SVG. -->
               {@html expand}</span>
           </button>
-          <figcaption><span>{piece.title}</span><small>{piece.group === 'occasions' ? c.filters[2] : c.filters[1]}</small></figcaption>
+          <figcaption><span>{piece.title}</span><small>{c.filters[artworkFilters.findIndex(filter => filter === piece.group)]}</small></figcaption>
         </figure>
       {/each}
     </div>

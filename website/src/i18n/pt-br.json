@@ -254,7 +254,7 @@
   "speechHelp": "As falas curtas aparecem apenas quando você interage.",
   "paused": "em pausa",
   "galleryTitle": "Muitos momentos. Sempre Nery.",
-  "galleryDescription": "Suas expressões do dia a dia e algumas ocasiões especiais, todas reunidas. Escolha sua favorita e veja de perto.",
+  "galleryDescription": "Expressões do dia a dia, ocasiões especiais e artes em alta resolução. Escolha sua favorita e veja de perto.",
   "microKitTitle": "Microícones",
   "microKitDescription": "A Nery em quatro tamanhos para interfaces compactas. O ícone de 16 px aparece no indicador do YuTheme Dark no OpenClaw.",
   "microKitScale": "Ampliação em cima, tamanho real embaixo.",
@@ -263,8 +263,15 @@
   "filters": [
     "Todas",
     "Dia a dia",
-    "Ocasiões"
+    "Ocasiões",
+    "Alta resolução"
   ],
+  "masterArt": {
+    "master-standing": { "title": "Corpo inteiro", "description": "Nery em pé, com os braços relaxados e um sorriso discreto." },
+    "master-bust": { "title": "Busto expressivo", "description": "Retrato da Nery sorrindo, com o rosto levemente inclinado e os laços visíveis." },
+    "master-present-left": { "title": "Apresentação à esquerda", "description": "Nery estende a palma da mão para a esquerda da imagem." },
+    "master-present-right": { "title": "Apresentação à direita", "description": "Nery estende a palma da mão para a direita da imagem." }
+  },
   "artworkCount": "{count} ilustrações",
   "viewArtwork": "Ver ilustração: {title}",
   "closeArtwork": "Fechar ilustração",
