@@ -1,15 +1,13 @@
----
+<script lang="ts">
+import { galleryImages } from "../../generated/web-art";
 import { artworks } from '../../data/artworks';
 import { messages, type Locale } from '../../i18n/messages';
 import expand from 'lucide-static/icons/expand.svg?raw';
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
-const { locale } = Astro.props as { locale: Locale };
-const c = messages[locale];
-const pieces = artworks(locale);
-const originals = import.meta.glob<{ default: ImageMetadata }>('../../../../assets/mascot/kit-v*/transparent/*.png', { eager: true });
-const sourceFor = (piece: typeof pieces[number]) => originals[`../../../../assets/mascot/${piece.group === 'occasions' ? 'kit-v2' : 'kit-v1'}/transparent/nery-${piece.id}.png`].default;
----
+const { locale }: { locale: Locale } = $props();
+const c = $derived(messages[locale]);
+const pieces = $derived(artworks(locale));
+</script>
+
 <section id="kit" class="section gallery-section" aria-labelledby="gallery-heading">
   <div class="wrap">
     <div class="section-heading">
@@ -18,23 +16,25 @@ const sourceFor = (piece: typeof pieces[number]) => originals[`../../../../asset
     </div>
     <div class="gallery-toolbar">
       <div class="filter-group" role="group" aria-label={c.filterLabel} hidden>
-        {['all', 'everyday', 'occasions'].map((filter, i) => <button type="button" data-filter={filter} aria-pressed={i === 0}>{c.filters[i]}</button>)}
+        {#each ['all', 'everyday', 'occasions'] as filter, i (filter)}<button type="button" data-filter={filter} aria-pressed={i === 0}>{c.filters[i]}</button>{/each}
       </div>
       <p id="gallery-result" role="status" aria-live="polite">{c.artworkCount.replace('{count}', String(pieces.length))}</p>
     </div>
     <div class="artwork-grid">
-      {pieces.map((piece, i) => (
-        <figure class:list={['artwork-card', { 'artwork-card-portrait': i === 0 }]} data-artwork={i} data-group={piece.group}>
+      {#each pieces as piece, i (piece.id)}
+        {@const image = galleryImages[piece.id]}
+        <figure class={['artwork-card', { 'artwork-card-portrait': i === 0 }]} data-artwork={i} data-group={piece.group}>
           <button type="button" class="artwork-open" data-art-index={i} disabled
             data-src={piece.src} data-width={piece.width} data-height={piece.height}
             data-title={piece.title} data-description={piece.description}
             aria-label={c.viewArtwork.replace('{title}', piece.title)}>
-            <span class="artwork-image"><Image src={sourceFor(piece)} alt={`Nery Mizuki — ${piece.title}`} width={Math.min(piece.width,380)} format="webp" quality={85} loading="lazy" decoding="async" style={`--native-width:${piece.width}px`} /></span>
-            <span class="expand-icon icon" aria-hidden="true" set:html={expand} />
+            <span class="artwork-image"><img src={image.src} alt={`Nery Mizuki — ${piece.title}`} width={image.width} height={image.height} loading="lazy" decoding="async" style={`--native-width:${piece.width}px`} /></span>
+            <span class="expand-icon icon" aria-hidden="true"><!-- eslint-disable-next-line svelte/no-at-html-tags -- Trusted Lucide SVG. -->
+              {@html expand}</span>
           </button>
           <figcaption><span>{piece.title}</span><small>{piece.group === 'occasions' ? c.filters[2] : c.filters[1]}</small></figcaption>
         </figure>
-      ))}
+      {/each}
     </div>
     <p class="artwork-notice">{c.artworkRights} <a href="#license">{c.fullLicense} <span aria-hidden="true">↗</span></a></p>
   </div>
@@ -46,4 +46,3 @@ const sourceFor = (piece: typeof pieces[number]) => originals[`../../../../asset
   <div class="dialog-navigation"><button type="button" id="artwork-previous"><span aria-hidden="true">←</span> {c.previousArtwork}</button><button type="button" id="artwork-next">{c.nextArtwork} <span aria-hidden="true">→</span></button></div>
   <p class="dialog-rights">© 2026 Yuri Cunha · {c.rights}</p>
 </dialog>
-<script>import '../../scripts/gallery';</script>

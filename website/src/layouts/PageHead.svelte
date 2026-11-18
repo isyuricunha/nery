@@ -1,35 +1,17 @@
----
-import '../styles/site.css';
+<script lang="ts">
+import browserLanguage from '../scripts/browser-language.js?raw';
 import { messages, type Locale } from '../i18n/messages';
 import { ORIGIN, pageMetadata } from '../scripts/seo';
-const { locale = 'en', notFound = false } = Astro.props as { locale?: Locale; notFound?: boolean };
-const c = messages[locale];
-const { title, description, canonical, image, language, graph } = pageMetadata(locale, notFound);
----
-<!doctype html>
-<html lang={language}>
-  <head>
-    <meta charset="UTF-8" />
-    {locale === 'en' && !notFound && <script is:inline id="browser-language">
-      (() => {
-        const url = new URL(window.location.href);
-        if (url.pathname !== '/' || url.searchParams.get('lang') === 'en') return;
+const { locale, notFound = false }: { locale: Locale; notFound?: boolean } = $props();
+const c = $derived(messages[locale]);
+const { title, description, canonical, image, graph } = $derived(pageMetadata(locale, notFound));
+</script>
 
-        let preference;
-        try { preference = localStorage.getItem('nery-language'); } catch { /* Storage may be blocked. */ }
-        if (preference !== 'en' && preference !== 'pt-br') {
-          const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
-          const supported = languages.map(language => language?.toLowerCase().split('-')[0]);
-          preference = supported.find(language => language === 'en' || language === 'pt') === 'pt'
-            ? 'pt-br' : 'en';
-        }
-        if (preference === 'pt-br') {
-          url.pathname = '/pt-br';
-          window.location.replace(url.href);
-        }
-      })();
-    </script>}
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<svelte:head>
+    {#if locale === 'en' && !notFound}
+    <!-- eslint-disable-next-line svelte/no-at-html-tags -- Static script from this repository. -->
+    {@html '<script id="browser-language">' + browserLanguage + '</' + 'script>'}
+  {/if}
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={notFound ? 'noindex,follow' : 'index,follow,max-image-preview:large'} />
@@ -37,14 +19,14 @@ const { title, description, canonical, image, language, graph } = pageMetadata(l
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#100e0d" />
     <meta name="author" content="Yuri Cunha" />
-    {!notFound && <>
+    {#if !notFound}
       <link rel="canonical" href={canonical} />
       <link rel="alternate" hreflang="en" href={`${ORIGIN}/`} />
       <link rel="alternate" hreflang="pt-BR" href={`${ORIGIN}/pt-br`} />
       <link rel="alternate" hreflang="x-default" href={`${ORIGIN}/`} />
-    </>}
+    {/if}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nery Mizuki" />
@@ -63,7 +45,8 @@ const { title, description, canonical, image, language, graph } = pageMetadata(l
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
     <meta name="twitter:image:alt" content={c.socialAlt} />
-    {!notFound && <script type="application/ld+json" set:html={JSON.stringify(graph).replace(/</g, '\\u003c')} />}
-  </head>
-  <body><a class="skip" href="#main">{c.skip}</a><slot /></body>
-</html>
+    {#if !notFound}
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON is escaped before embedding. -->
+      {@html '<script type="application/ld+json">' + JSON.stringify(graph).replace(/</g, '\u003c') + '</' + 'script>'}
+    {/if}
+</svelte:head>

@@ -1,5 +1,8 @@
 node_modules/
 dist/
 .astro/
+.svelte-kit/
+public/generated-art/
+src/generated/web-art.ts
 .vercel
 .env*

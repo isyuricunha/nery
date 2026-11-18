@@ -4,32 +4,35 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22.17.0"
+  },
   "scripts": {
     "test": "node --test scripts/test-animation-timing.mjs scripts/test-i18n.mjs scripts/test-contrast.mjs",
     "test:seo": "node --test scripts/test-seo.mjs",
-    "predev": "node scripts/prepare-assets.mjs",
-    "dev": "astro dev",
+    "dev": "node scripts/prepare-assets.mjs && vite dev",
     "lint": "node scripts/prepare-assets.mjs && eslint .",
-    "check": "node scripts/prepare-assets.mjs && astro check",
-    "prebuild": "node scripts/prepare-assets.mjs",
-    "build": "astro build",
-    "preview": "astro preview"
+    "check": "node scripts/prepare-assets.mjs && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "build": "node scripts/prepare-assets.mjs && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@astrojs/sitemap": "latest",
     "@fontsource-variable/geist": "latest",
-    "astro": "7.4.12",
     "lucide-static": "latest"
   },
   "devDependencies": {
-    "@astrojs/check": "latest",
     "@eslint/js": "latest",
+    "@sveltejs/adapter-static": "4.0.1",
+    "@sveltejs/kit": "3.3.1",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
     "eslint": "latest",
-    "eslint-plugin-astro": "latest",
-    "eslint-plugin-jsx-a11y": "latest",
+    "eslint-plugin-svelte": "3.24.1",
     "globals": "latest",
     "sharp": "0.35.5",
+    "svelte": "5.58.0",
+    "svelte-check": "4.7.8",
     "typescript": "6.0.3",
-    "typescript-eslint": "latest"
+    "typescript-eslint": "latest",
+    "vite": "8.3.8"
   }
 }

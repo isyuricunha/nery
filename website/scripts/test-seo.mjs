@@ -5,21 +5,30 @@ import { runInNewContext } from 'node:vm';
 
 // Check the actual exported HTML so omissions in the template fail the release check.
 for (const [locale, file, language, path] of [
-  ['en', 'index.html', 'en', '/'], ['pt-br', 'pt-br/index.html', 'pt-BR', '/pt-br'],
+  ['en', 'index.html', 'en', '/'], ['pt-br', 'pt-br.html', 'pt-BR', '/pt-br'],
 ]) {
   test(`${locale}: exported page has complete, consistent search metadata`, async () => {
     const html = await readFile(new URL(`../dist/${file}`, import.meta.url), 'utf8');
     const canonical = `https://nery.yuricunha.com${path}`;
-    assert.ok(html.includes(`lang="${language}"`));
+    assert.match(html, new RegExp(`<html\\b[^>]*\\blang="${language}"`));
     assert.ok(html.includes(`rel="canonical" href="${canonical}"`));
     assert.equal((html.match(/<h1\b/g) || []).length, 1);
     assert.match(html, /<meta name="description" content="[^"]{60,200}"/);
     assert.match(html, /<meta name="robots" content="index,follow,max-image-preview:large"/);
     for (const lang of ['en','pt-BR','x-default']) assert.ok(html.includes(`hreflang="${lang}"`));
     assert.ok(html.includes(`https://nery.yuricunha.com/social/nery-${locale}.png`));
-    const avif = [...html.matchAll(/<source[^>]+>/g)].find(match => match[0].includes('type="image/avif"'));
-    assert.ok(avif);
-    assert.match(avif[0], /srcset=/);
+    for (const format of ['avif', 'webp']) {
+      const source = [...html.matchAll(/<source[^>]+>/g)].find(match => match[0].includes(`type="image/${format}"`));
+      const srcset = source?.[0].match(/srcset="([^"]+)"/)?.[1];
+      assert.ok(srcset, `Missing responsive ${format} source`);
+      assert.deepEqual(srcset.split(', ').map(entry => entry.split(' ')[1]), ['320w', '480w', '640w', '745w']);
+    }
+    const images = new Set([...html.matchAll(/\/generated-art\/([^?\s"]+)\?v=[a-f0-9]{16}/g)].map(match => match[1]));
+    assert.equal(images.size, 25, '4 widths in 3 formats, 11 thumbnails and 2 atlases');
+    for (const file of images) {
+      const bytes = await readFile(new URL(`../dist/generated-art/${file}`, import.meta.url));
+      assert.ok(bytes.length > 0, `Missing image bytes for ${file}`);
+    }
     const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
     assert.equal(graph.filter(node => node['@type']==='WebSite').length, 1);
     const page = graph.find(node => node['@type']==='WebPage');
@@ -63,7 +72,7 @@ test('home chooses the first supported browser language and honors manual choice
   assert.equal(redirect({ languages: ['en'], saved: 'pt-br' }), `${origin}/pt-br?ref=home#kit`);
   assert.equal(redirect({ languages: [], blocked: true }), `${origin}/pt-br?ref=home#kit`);
   assert.equal(redirect({ languages: ['pt-BR'], path: '/?lang=en#kit', blocked: true }), undefined);
-  const portuguese = await readFile(new URL('../dist/pt-br/index.html', import.meta.url), 'utf8');
+  const portuguese = await readFile(new URL('../dist/pt-br.html', import.meta.url), 'utf8');
   assert.doesNotMatch(portuguese, /id="browser-language"/);
 });
 test('error and developer preview pages are explicitly excluded from indexing', async () => {

@@ -1,4 +1,5 @@
 import './build-social.mjs';
+import './prepare-web-art.mjs';
 import { createHash } from 'node:crypto';
 import { copyFile, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 
@@ -42,7 +43,7 @@ await copyReview('../pet/preview/motion-review.html', 'public/motion-review.html
 await copyReview('../pet/preview/walk-review.html', 'public/walk-review.html');
 await copyReview('../pet/candidates/walk-proportions/comparison.html', 'public/walk-candidate-review.html');
 
-// Astro/Vite serves files in /public as-is. Hash the sprite CONTENT and
+// Vite serves files in /public as-is. Hash the sprite CONTENT and
 // include it in the URL so a stale cached atlas can never flash old frames.
 // Retain the canonical /spritesheet.webp path for Petdex users.
 const spriteBytes = await readFile(new URL('../pet/nery/spritesheet.webp', root));

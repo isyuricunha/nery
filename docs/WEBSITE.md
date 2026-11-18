@@ -1,7 +1,7 @@
 # Website development
 
 The site has two static language routes: `/` for English and `/pt-br` for
-Brazilian Portuguese. Both use `website/src/components/NerySite.astro` and the
+Brazilian Portuguese. Both use `website/src/components/NerySite.svelte` and the
 catalogs in `website/src/i18n/`. The language switch retains the current section.
 On the home route, the site uses the first supported language in the browser's
 preference list and defaults to English. The language switch saves an explicit
@@ -9,17 +9,23 @@ choice locally. A direct visit to `/pt-br` always opens Brazilian Portuguese.
 Page titles, metadata, accessibility labels, animation labels and speech are
 localized. Canonical and alternate-language URLs are rendered at build time.
 
-From `website/`, run `pnpm install` and `pnpm dev --host 127.0.0.1`.
+With Node.js 22.17 or newer, run `pnpm install` and
+`pnpm dev --host 127.0.0.1` from `website/`.
 The development server normally uses `http://127.0.0.1:4321`; it reloads local
 changes. This does not update the published site.
 
-`pnpm build` creates `website/dist/`; `pnpm preview --host 127.0.0.1` serves that
-build. Run `pnpm lint`, `pnpm check` and `pnpm test` before committing, then
+`pnpm build` creates the SvelteKit static export in `website/dist/`.
+`pnpm preview --host 127.0.0.1` serves the build on port 4322.
+Run `pnpm lint`, `pnpm check` and `pnpm test` before committing, then
 `pnpm build && pnpm test:seo` to check the exported pages and sitemap.
+
+On Vercel, `website/vercel.json` selects static hosting and extensionless URLs.
+For other static hosts, map `/pt-br` to `pt-br.html` and serve `404.html`
+with status 404 for missing files. The build needs no application server.
 
 ## Interface and accessibility
 
-The redesigned site uses `website/src/styles/site.css` and small Astro components
+The redesigned site uses `website/src/styles/site.css` and small Svelte components
 under `website/src/components/site/`. It preserves the original character art.
 The navigation, language switch and preferences are available at every screen
 size. Its measured header height sets the anchor offset without determining the
@@ -48,7 +54,7 @@ Nery is represented as a fictional creative work rather than a real person.
 The sitemap contains only the two language pages. The 404 and internal animation
 review pages have `noindex,follow`.
 
-Astro generates responsive AVIF/WebP versions of the hero and lightweight WebP
+`prepare-web-art.mjs` generates responsive AVIF/WebP versions of the hero and lightweight WebP
 gallery thumbnails. The dialog loads the native artwork when opened. The web
 atlases use high-quality optimized copies at the original pixel dimensions; the
 approved source atlases remain unchanged. Animation loading yields to the hero,
