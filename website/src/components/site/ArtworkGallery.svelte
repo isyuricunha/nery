@@ -1,6 +1,7 @@
 <script lang="ts">
 import { galleryImages } from "../../generated/web-art";
 import MicroIconKit from './MicroIconKit.svelte';
+import ProfileKit from './ProfileKit.svelte';
 import { artworkFilters, artworks } from '../../data/artworks';
 import { messages, type Locale } from '../../i18n/messages';
 import expand from 'lucide-static/icons/expand.svg?raw';
@@ -22,6 +23,7 @@ const pieces = $derived(artworks(locale));
       <div class="gallery-links">
         <p id="gallery-result" role="status" aria-live="polite">{c.artworkCount.replace('{count}', String(pieces.length))}</p>
         <a href="#micro-icons">{c.microKitTitle} <span aria-hidden="true">↓</span></a>
+        <a href="#profile-kit">{c.profileKitTitle} <span aria-hidden="true">↓</span></a>
       </div>
     </div>
     <div class="artwork-grid">
@@ -41,6 +43,7 @@ const pieces = $derived(artworks(locale));
       {/each}
     </div>
     <MicroIconKit {locale} />
+    <ProfileKit {locale} />
     <p class="artwork-notice">{c.artworkRights} <a href="#license">{c.fullLicense} <span aria-hidden="true">↗</span></a></p>
   </div>
 </section>

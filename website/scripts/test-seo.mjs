@@ -24,8 +24,12 @@ for (const [locale, file, language, path] of [
       assert.deepEqual(srcset.split(', ').map(entry => entry.split(' ')[1]), ['320w', '480w', '640w', '745w']);
     }
     const images = new Set([...html.matchAll(/\/generated-art\/([^?\s"]+)\?v=[a-f0-9]{16}/g)].map(match => match[1]));
-    assert.equal(images.size, 37, '4 widths in 3 formats, 15 thumbnails, 4 full master poses, 2 atlases and 4 micro icons');
+    assert.equal(images.size, 42, 'generated responsive images, gallery art, atlases, micro icons and profile media');
     assert.equal((html.match(/data-group="masters"/g) || []).length, 4);
+    assert.match(html, /id="profile-kit"/);
+    for (const key of ['avatar', 'friendly', 'banner', 'compact', 'background']) {
+      assert.ok(images.has(`profile-${key}.webp`), `Missing profile ${key}`);
+    }
     assert.match(html, /id="micro-icons"/);
     for (const file of images) {
       const bytes = await readFile(new URL(`../dist/generated-art/${file}`, import.meta.url));
