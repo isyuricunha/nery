@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "name": "Nery Mizuki",
+  "license": "../mascot/LICENSE.md",
+  "sources": {
+    "profile": {
+      "file": "source/profile.png",
+      "generation": "Built-in image generation",
+      "references": [
+        "../mascot/kit-v3/transparent/nery-master-bust.png",
+        "../mascot/kit-v1/source/approved-character-sheet.png"
+      ],
+      "prompt": "One square 1:1 profile avatar for Yuri's original Nery Mizuki mascot, true RGBA transparency. Reference 1 is the exact approved high-resolution character identity and reference 2 is the historical style sheet. Draw a fresh face-first crop, slight three-quarter turn, with a small warm closed smile and direct gaze, luminous amber eyes separated from her copper wavy fringe, short rounded cheeks, cream side ribbon knots and only a sliver of charcoal hoodie collar. Chibi anime with clean precise outlines, graphic readable shapes, preserve copper-red hair, brow shape, crown curl and warm cheek. This distinctive avatar must work when masked into a circle and downsampled to 32 px. Keep both eyes, chin and the main cream bow well within the central circle; let only outer hair tips approach the perimeter. No object, frame, drop shadow, halo, text or logo. Balanced face at center."
+    },
+    "friendly": {
+      "file": "source/friendly.png",
+      "generation": "Built-in image generation",
+      "references": [
+        "../mascot/kit-v3/transparent/nery-master-bust.png",
+        "../mascot/kit-v1/source/approved-character-sheet.png"
+      ],
+      "prompt": "One square 1:1 avatar in the same illustrated Nery Mizuki identity as image 1 (head, amber eyes, copper red hair, side bows, rounded face, ringlets, little curl) and image 2 (original character sheet). Draw a cheerful straight-on profile-avatar portrait with a natural small open smile, BOTH amber eyes open and warm, a little peach blush, tightly framed head with only a sliver of charcoal-copper hoodie. Bold clear grouping of face, red crown, and cream side bows so it reads at 32 px and under a central circular mask. All identifying features at least 12% inside canvas, no props or other characters, no lines behind, no text or emblem. Genuine transparent PNG cutout, not a drawn checkerboard."
+    },
+    "background": {
+      "file": "source/background.png",
+      "generation": "Built-in image generation",
+      "references": [],
+      "prompt": "One wide horizontal 3:2 or wider illustrated environment as a profile background for the Nery Mizuki mascot, no character or silhouettes in the scene. A dark cozy developer workspace at evening illustrated with copper/cream highlights and charcoal tones, hand-drawn anime production art, layers of depth and elegant restrained detail. Far right a warm amber desk lamp and a few quiet books, hints of muted dusk outside far left window. Broad quiet very dark charcoal-brown center-left and low-contrast midframe suitable behind profile text, subtly lit perimeter and tasteful warm bokeh. Main environmental accents in the horizontal middle 55 percent so a very wide crop retains the mood. Subtle materials, uncluttered, no screen content, no letters, no words, no logos, no watermark. Full bleed RGB illustration, not a mockup or grid."
+    },
+    "banner": {
+      "file": "source/banner.png",
+      "generation": "Built-in image generation",
+      "references": [
+        "../mascot/kit-v3/transparent/nery-master-bust.png",
+        "../mascot/kit-v1/source/approved-character-sheet.png"
+      ],
+      "prompt": "Design ONE very wide profile header illustration, no text. Nery Mizuki from reference 1 (exact face and copper wavy fringe, amber eyes, cream ribbons, charcoal zip hoodie with copper orange trim, anime chibi silhouette) and reference 2 (original identity). Nery is clearly visible in a small bust illustration entirely within the RIGHT one-third of the canvas; soft delighted smile and open amber eyes looking toward center. Right-positioned character small enough vertically so her eyes, cream bows, full forehead and top of hair are inside middle 50% of canvas height, well away from any crop. Rest of canvas is a warm charcoal cozy nighttime dev desk ambience, subtle amber lamp bloom at far right, quiet nearly monochrome charcoal brown left half for avatars or titles. Edge to edge, one wide panoramic composition for 3:1 and 2.5:1 profile header exports. Clean warm cel-shaded illustration, no readable text, no logo or watermark, no graphic panels, no glow overlay on eyes. The exact visual style of the original Nery references."
+    }
+  },
+  "avatarSizes": [
+    32,
+    48,
+    64,
+    128,
+    256,
+    400,
+    512
+  ],
+  "covers": [
+    {
+      "file": "banners/profile.webp",
+      "source": "banner",
+      "size": [
+        1440,
+        480
+      ],
+      "position": [
+        1,
+        0.5
+      ]
+    },
+    {
+      "file": "banners/discord.png",
+      "source": "banner",
+      "size": [
+        600,
+        240
+      ],
+      "position": [
+        1,
+        0.5
+      ],
+      "maxBytes": 10000000
+    },
+    {
+      "file": "banners/x.jpg",
+      "source": "banner",
+      "size": [
+        1500,
+        500
+      ],
+      "position": [
+        1,
+        0.5
+      ],
+      "maxBytes": 2000000
+    },
+    {
+      "file": "banners/github.jpg",
+      "source": "banner",
+      "size": [
+        1280,
+        640
+      ],
+      "position": [
+        1,
+        0.5
+      ],
+      "maxBytes": 1000000
+    },
+    {
+      "file": "backgrounds/desktop.webp",
+      "source": "background",
+      "size": [
+        1440,
+        810
+      ],
+      "position": [
+        0.5,
+        0.55
+      ]
+    },
+    {
+      "file": "backgrounds/mobile.webp",
+      "source": "background",
+      "size": [
+        640,
+        960
+      ],
+      "position": [
+        0.76,
+        0.5
+      ]
+    }
+  ]
+}

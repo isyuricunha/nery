@@ -71,6 +71,11 @@ The [master kit](assets/mascot/kit-v3/README.md) includes a neutral full-body
 pose, an expressive bust and two presentation directions in native-resolution
 PNG, WebP and layered OpenRaster.
 
+## Profile kit
+
+The [profile kit](assets/profile/README.md) provides two avatars, headers,
+desktop and mobile backgrounds, and English and Brazilian Portuguese copy.
+
 ## Using Nery in an authorized project
 
 1. Download the kit from the latest tagged release of this repository (or the matching `kit-vX` folder on the main branch).

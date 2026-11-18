@@ -1,0 +1,22 @@
+{
+  "en": {
+    "name": "Nery Mizuki",
+    "tagline": "Yuri Cunha’s mascot",
+    "bio": "A curious copper-haired chibi from the Mizuki family. She appears in Yuri Cunha’s projects and products, from quiet work sessions to launch days.",
+    "status": {
+      "working": "Working alongside Yuri",
+      "celebrating": "Celebrating a launch",
+      "resting": "Taking a coffee break"
+    }
+  },
+  "pt-br": {
+    "name": "Nery Mizuki",
+    "tagline": "Mascote do Yuri Cunha",
+    "bio": "Uma chibi curiosa de cabelo acobreado, da família Mizuki. Ela aparece nos projetos e produtos do Yuri Cunha, dos dias tranquilos de trabalho aos lançamentos.",
+    "status": {
+      "working": "Trabalhando com o Yuri",
+      "celebrating": "Comemorando um lançamento",
+      "resting": "Fazendo uma pausa para o café"
+    }
+  }
+}
